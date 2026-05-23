@@ -24,28 +24,28 @@ CLI ----------- local protocol ----------- HUD
 
 ```mermaid
 flowchart TD
-  CLI[{{PROJECT_SLUG}} CLI] --> PROTO[Local Protocol]
-  TG[Telegram Adapter] --> PROTO
-  HUD[{{PROJECT_NAME}} HUD] --> PROTO
-  VOICE[Voice Client] --> PROTO
-  ANDROID[Android Remote Later] --> PROTO
+  CLI["{{PROJECT_SLUG}} CLI"] --> PROTO["Local Protocol"]
+  TG["Telegram Adapter"] --> PROTO
+  HUD["{{PROJECT_NAME}} HUD"] --> PROTO
+  VOICE["Voice Client"] --> PROTO
+  ANDROID["Android Remote Later"] --> PROTO
 
-  PROTO --> DAEMON[{{PROJECT_SLUG}}d]
-  DAEMON --> BUS[Event Bus]
-  DAEMON --> SESSION[Session Store]
-  DAEMON --> POLICY[Approval and Policy Engine]
-  DAEMON --> ORCH[Agent Orchestrator]
+  PROTO --> DAEMON["{{PROJECT_SLUG}}d"]
+  DAEMON --> BUS["Event Bus"]
+  DAEMON --> SESSION["Session Store"]
+  DAEMON --> POLICY["Approval and Policy Engine"]
+  DAEMON --> ORCH["Agent Orchestrator"]
 
-  ORCH --> MODELS[Model Provider Layer]
-  ORCH --> TOOLS[Native Tool Runtime]
-  ORCH --> WORKERS[Worker Scheduler]
+  ORCH --> MODELS["Model Provider Layer"]
+  ORCH --> TOOLS["Native Tool Runtime"]
+  ORCH --> WORKERS["Worker Scheduler"]
 
-  TOOLS --> FILES[File Tools]
-  TOOLS --> SHELL[Shell Tool]
-  TOOLS --> GIT[Git Tools]
+  TOOLS --> FILES["File Tools"]
+  TOOLS --> SHELL["Shell Tool"]
+  TOOLS --> GIT["Git Tools"]
 
-  WORKERS --> WORKTREES[Git Worktrees]
-  BUS --> LOGS[JSONL Logs]
+  WORKERS --> WORKTREES["Git Worktrees"]
+  BUS --> LOGS["JSONL Logs"]
   BUS --> HUD
   BUS --> TG
   BUS --> CLI
