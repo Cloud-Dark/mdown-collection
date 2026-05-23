@@ -1,9 +1,9 @@
 # Storage Format and Migration — v1.0
 
-## 1. `~/.cadis` Directory Layout
+## 1. `~/.{{PROJECT_SLUG}}` Directory Layout
 
 ```text
-~/.cadis/
+~/.{{PROJECT_SLUG}}/
 ├── config.toml                        # Global daemon configuration (TOML)
 ├── profiles/
 │   └── {profile_id}/                  # One profile home per identity
@@ -34,22 +34,22 @@
 │   ├── {session_id}.jsonl             # Per-session redacted event log
 │   └── daemon.jsonl                   # Daemon-level events (no session)
 ├── run/
-│   └── cadisd.sock                    # Daemon Unix socket
+│   └── {{PROJECT_SLUG}}d.sock                    # Daemon Unix socket
 ├── global-cache/                      # Shared cache (safe to delete)
 ├── plugins/                           # Installed plugins/extensions
 └── bin/                               # Managed helper binaries
 ```
 
-All directories under `~/.cadis` are created with mode `0700`. All files are
+All directories under `~/.{{PROJECT_SLUG}}` are created with mode `0700`. All files are
 written with mode `0600`. Writes use atomic rename via temporary files to
 prevent partial reads.
 
-The socket path resolves as: `$CADIS_SOCKET` → `config.toml socket_path` →
-`$XDG_RUNTIME_DIR/cadis/cadisd.sock` → `~/.cadis/run/cadisd.sock`.
+The socket path resolves as: `${{PROJECT_NAME}}_SOCKET` → `config.toml socket_path` →
+`$XDG_RUNTIME_DIR/{{PROJECT_SLUG}}/{{PROJECT_SLUG}}d.sock` → `~/.{{PROJECT_SLUG}}/run/{{PROJECT_SLUG}}d.sock`.
 
 ## 2. State Metadata Formats
 
-Each state record is a single pretty-printed JSON file under `~/.cadis/state/`.
+Each state record is a single pretty-printed JSON file under `~/.{{PROJECT_SLUG}}/state/`.
 File names use redaction-safe IDs: path separators and special characters are
 replaced with `_`. Secret-looking values are replaced with `[REDACTED]` before
 writing.
@@ -70,11 +70,11 @@ writing.
 {
   "agent_id": "main",
   "role": "Orchestrator",
-  "display_name": "CADIS",
+  "display_name": "{{PROJECT_NAME}}",
   "parent_agent_id": null,
   "model": "auto",
   "status": "ready",
-  "specialist_id": "cadis-main",
+  "specialist_id": "{{PROJECT_SLUG}}-main",
   "specialist_label": "Main Orchestrator",
   "persona": "..."
 }
@@ -112,13 +112,13 @@ writing.
   "agent_session_id": "ags_xyz789",
   "status": "running",
   "cli": null,
-  "cwd": "/home/user/project/.cadis/worktrees/worker_1",
+  "cwd": "/home/user/project/.{{PROJECT_SLUG}}/worktrees/worker_1",
   "summary": "Implement auth module",
   "error_code": null,
   "error": null,
   "cancellation_requested_at": null,
-  "worktree": { "workspace_id": "my-project", "branch": "cadis/worker_1/auth" },
-  "artifacts": { "root": "~/.cadis/profiles/default/artifacts/workers/worker_1" },
+  "worktree": { "workspace_id": "my-project", "branch": "{{PROJECT_SLUG}}/worker_1/auth" },
+  "artifacts": { "root": "~/.{{PROJECT_SLUG}}/profiles/default/artifacts/workers/worker_1" },
   "updated_at": "2026-04-29T01:00:00Z"
 }
 ```
@@ -150,11 +150,11 @@ writing.
 
 ## 3. JSONL Event Log Format
 
-Event logs are append-only JSONL files under `~/.cadis/logs/`. Each line is one
+Event logs are append-only JSONL files under `~/.{{PROJECT_SLUG}}/logs/`. Each line is one
 redacted `EventEnvelope`:
 
 ```json
-{"protocol_version":"0.9","event_id":"evt_001","timestamp":"2026-04-29T01:00:00Z","source":"cadisd","session_id":"ses_abc123","event":"message.complete","data":{...}}
+{"protocol_version":"0.9","event_id":"evt_001","timestamp":"2026-04-29T01:00:00Z","source":"{{PROJECT_SLUG}}d","session_id":"ses_abc123","event":"message.complete","data":{...}}
 ```
 
 Fields:
@@ -164,7 +164,7 @@ Fields:
 | `protocol_version` | string | Protocol version (e.g. `"0.9"`) |
 | `event_id` | string | Daemon-generated unique event ID |
 | `timestamp` | string | UTC ISO-8601 timestamp |
-| `source` | string | Source component, usually `"cadisd"` |
+| `source` | string | Source component, usually `"{{PROJECT_SLUG}}d"` |
 | `session_id` | string? | Session ID when event belongs to a session |
 | `event` | string | Event type (flattened via serde) |
 
@@ -182,10 +182,10 @@ id = "my-project"
 kind = "project"
 root = "~/Project/my-project"
 vcs = "git"
-owner = "rama"
+owner = "{{AGENT_SLUG}}"
 trusted = true
-worktree_root = ".cadis/worktrees"
-artifact_root = ".cadis/artifacts"
+worktree_root = ".{{PROJECT_SLUG}}/worktrees"
+artifact_root = ".{{PROJECT_SLUG}}/artifacts"
 checkpoint_policy = "enabled"
 
 [[workspace.alias]]
@@ -208,10 +208,10 @@ Append-only JSONL. Each line is one `WorkspaceGrantRecord`:
 `access` values: `read`, `write`, `exec`, `admin`.
 `source` values: `route`, `user`, `policy`, `worker_spawn`.
 
-## 5. Project `.cadis/` Layout
+## 5. Project `.{{PROJECT_SLUG}}/` Layout
 
 ```text
-<project>/.cadis/
+<project>/.{{PROJECT_SLUG}}/
 ├── workspace.toml                     # Project-local workspace metadata
 ├── .gitignore                         # Ignores worktrees/, artifacts/, tmp/, logs/
 ├── worktrees/
@@ -229,9 +229,9 @@ Append-only JSONL. Each line is one `WorkspaceGrantRecord`:
 workspace_id = "my-project"
 kind = "project"
 vcs = "git"
-worktree_root = ".cadis/worktrees"
-artifact_root = ".cadis/artifacts"
-media_root = ".cadis/media"
+worktree_root = ".{{PROJECT_SLUG}}/worktrees"
+artifact_root = ".{{PROJECT_SLUG}}/artifacts"
+media_root = ".{{PROJECT_SLUG}}/media"
 ```
 
 ### Worker worktree metadata (`.metadata/{worker_id}.toml`)
@@ -239,11 +239,11 @@ media_root = ".cadis/media"
 ```toml
 worker_id = "worker_1"
 workspace_id = "my-project"
-worktree_path = ".cadis/worktrees/worker_1"
-branch_name = "cadis/worker_1/auth"
+worktree_path = ".{{PROJECT_SLUG}}/worktrees/worker_1"
+branch_name = "{{PROJECT_SLUG}}/worker_1/auth"
 base_ref = "HEAD"
 state = "ready"
-artifact_root = "/home/user/.cadis/profiles/default/artifacts/workers/worker_1"
+artifact_root = "/home/user/.{{PROJECT_SLUG}}/profiles/default/artifacts/workers/worker_1"
 ```
 
 `state` values: `planned`, `ready`, `review_pending`, `cleanup_pending`, `removed`.
@@ -269,7 +269,7 @@ artifact_root = "/home/user/.cadis/profiles/default/artifacts/workers/worker_1"
 The v1.0 storage format is **stable**. Future v1.x releases will include
 migration scripts if the format changes.
 
-**v0.x → v1.0 migration:** Delete `~/.cadis/state/` and restart the daemon.
+**v0.x → v1.0 migration:** Delete `~/.{{PROJECT_SLUG}}/state/` and restart the daemon.
 Session and agent-session state is ephemeral and rebuilt on daemon startup.
 Worker and approval state from v0.x is not carried forward.
 
@@ -281,15 +281,15 @@ No migration is needed for profile homes, workspace registries, or agent homes
 To back up a C.A.D.I.S. installation:
 
 ```bash
-cp ~/.cadis/config.toml /backup/cadis/config.toml
-cp -a ~/.cadis/profiles/ /backup/cadis/profiles/
+cp ~/.{{PROJECT_SLUG}}/config.toml /backup/{{PROJECT_SLUG}}/config.toml
+cp -a ~/.{{PROJECT_SLUG}}/profiles/ /backup/{{PROJECT_SLUG}}/profiles/
 ```
 
 To restore:
 
 ```bash
-cp /backup/cadis/config.toml ~/.cadis/config.toml
-cp -a /backup/cadis/profiles/ ~/.cadis/profiles/
+cp /backup/{{PROJECT_SLUG}}/config.toml ~/.{{PROJECT_SLUG}}/config.toml
+cp -a /backup/{{PROJECT_SLUG}}/profiles/ ~/.{{PROJECT_SLUG}}/profiles/
 ```
 
 The `state/` directory is ephemeral and does not need to be backed up. The

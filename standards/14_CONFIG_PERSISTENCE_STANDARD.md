@@ -2,22 +2,22 @@
 
 ## 1. Purpose
 
-This standard defines CADIS configuration, local state, persistence, migration, and redaction rules.
+This standard defines {{PROJECT_NAME}} configuration, local state, persistence, migration, and redaction rules.
 
-`cadisd` owns durable state. Clients may cache view state, but they are not authoritative.
+`{{PROJECT_SLUG}}d` owns durable state. Clients may cache view state, but they are not authoritative.
 
-## 2. CADIS Home
+## 2. {{PROJECT_NAME}} Home
 
 Default home:
 
 ```text
-~/.cadis/
+~/.{{PROJECT_SLUG}}/
 ```
 
 Default layout:
 
 ```text
-~/.cadis/
+~/.{{PROJECT_SLUG}}/
 |-- config.toml
 |-- profiles/
 |-- global-cache/
@@ -29,13 +29,13 @@ Default layout:
 
 Rules:
 
-- `CADIS_HOME` may override the default home.
+- `{{PROJECT_NAME}}_HOME` may override the default home.
 - Paths in config may use `~`, but internal code should normalize before use.
 - Runtime-created files should use restrictive permissions where possible.
-- Current code has a partial `~/.cadis` baseline, store-level `~/.cadis/state`
+- Current code has a partial `~/.{{PROJECT_SLUG}}` baseline, store-level `~/.{{PROJECT_SLUG}}/state`
   helpers, default profile-home initialization, and persistent workspace
   registry/grant files. Full profile management remains future work.
-- Coding worktrees live under the project `.cadis/worktrees/` directory by
+- Coding worktrees live under the project `.{{PROJECT_SLUG}}/worktrees/` directory by
   default, not under profile state. Worker records and artifacts live under the
   profile home.
 
@@ -44,7 +44,7 @@ Rules:
 Target profile home:
 
 ```text
-~/.cadis/profiles/<profile>/
+~/.{{PROJECT_SLUG}}/profiles/<profile>/
 |-- profile.toml
 |-- .env
 |-- secrets/
@@ -65,7 +65,7 @@ Target profile home:
 Rules:
 
 - `.env`, `secrets/`, channel tokens, and auth material must not be committed,
-  logged, or copied into project `.cadis/`.
+  logged, or copied into project `.{{PROJECT_SLUG}}/`.
 - Agent homes under `agents/<agent>/` store persona, instructions, memory,
   skills, and policy, but not canonical session transcripts.
 - Workspace registries under `workspaces/` record project roots, aliases, and
@@ -74,10 +74,10 @@ Rules:
   project worktrees.
 - Generated worker artifacts live under `artifacts/workers/<worker-id>/`.
 
-Project-local CADIS metadata:
+Project-local {{PROJECT_NAME}} metadata:
 
 ```text
-<project>/.cadis/
+<project>/.{{PROJECT_SLUG}}/
 |-- workspace.toml
 |-- skills/
 |-- artifacts/
@@ -85,13 +85,13 @@ Project-local CADIS metadata:
 `-- media/
 ```
 
-Project `.cadis/` metadata is untrusted until validated by the daemon and does
+Project `.{{PROJECT_SLUG}}/` metadata is untrusted until validated by the daemon and does
 not grant access by itself.
 
 ## 3. Config Format
 
 - User config is TOML.
-- Default path is `~/.cadis/config.toml`.
+- Default path is `~/.{{PROJECT_SLUG}}/config.toml`.
 - Config examples must not contain raw secrets.
 - Unknown fields should be rejected or warned consistently by config version policy.
 - Environment variables may override selected fields documented in `docs/16_CONFIG_REFERENCE.md`.
@@ -168,7 +168,7 @@ Rules:
 - Logs must be redacted before write.
 - Debug mode may increase detail but must still redact secrets.
 - Profile-scoped workspace metadata lives under
-  `~/.cadis/profiles/<profile>/workspaces/` now. Event logs and richer
+  `~/.{{PROJECT_SLUG}}/profiles/<profile>/workspaces/` now. Event logs and richer
   session/worker recovery will move deeper into the profile home as those
   managers mature.
 
@@ -185,9 +185,9 @@ Minimum denied paths:
 ~/.aws
 ~/.gnupg
 ~/.config/gcloud
-~/.cadis/profiles/*/.env
-~/.cadis/profiles/*/secrets
-~/.cadis/profiles/*/channels/*/tokens
+~/.{{PROJECT_SLUG}}/profiles/*/.env
+~/.{{PROJECT_SLUG}}/profiles/*/secrets
+~/.{{PROJECT_SLUG}}/profiles/*/channels/*/tokens
 /etc
 /dev
 /proc
@@ -207,7 +207,7 @@ Rules:
 
 ## 7.2 Media Assets
 
-Project-scoped CADIS media lives under `<project>/.cadis/media/`:
+Project-scoped {{PROJECT_NAME}} media lives under `<project>/.{{PROJECT_SLUG}}/media/`:
 
 ```text
 input/
@@ -243,7 +243,7 @@ Rules:
 
 ## 9. Crash Recovery
 
-CADIS should persist enough metadata to recover or explain:
+{{PROJECT_NAME}} should persist enough metadata to recover or explain:
 
 - incomplete sessions
 - pending or resolved approvals

@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-The CADIS protocol is the typed contract between clients and `cadisd`.
+The {{PROJECT_NAME}} protocol is the typed contract between clients and `{{PROJECT_SLUG}}d`.
 
 Initial goals:
 
@@ -34,7 +34,7 @@ Every daemon event should include:
   "event_id": "evt_...",
   "session_id": "ses_...",
   "timestamp": "2026-04-26T00:00:00Z",
-  "source": "cadisd",
+  "source": "{{PROJECT_SLUG}}d",
   "type": "message.delta",
   "payload": {}
 }
@@ -62,7 +62,7 @@ client:
     "protocol_version": "0.2",
     "event_id": "evt_...",
     "timestamp": "2026-04-26T00:00:00Z",
-    "source": "cadisd",
+    "source": "{{PROJECT_SLUG}}d",
     "type": "daemon.started",
     "payload": {}
   }
@@ -157,11 +157,11 @@ rejected with `worker_not_found`; workers without a terminal result are rejected
 with `worker_result_unavailable`.
 
 `worker.cleanup` is a metadata-only cleanup planning request. The daemon accepts
-only terminal workers with a project-local CADIS-owned worker worktree record
-under `<project>/.cadis/worktrees/<worker-id>/`. If a caller supplies
+only terminal workers with a project-local {{PROJECT_NAME}}-owned worker worktree record
+under `<project>/.{{PROJECT_SLUG}}/worktrees/<worker-id>/`. If a caller supplies
 `worktree_path`, it must resolve to the daemon-recorded worker path. Unknown
 workers, missing project-local metadata, missing worktree paths, removed records,
-or non-CADIS paths are rejected and do not mutate metadata. Accepted requests
+or non-{{PROJECT_NAME}} paths are rejected and do not mutate metadata. Accepted requests
 move the worker worktree to `cleanup_pending`, emit
 `worker.cleanup.requested`, and do not delete files.
 
@@ -171,7 +171,7 @@ may include worktree and artifact metadata. Failed worker events include optiona
 `cancellation_requested_at`. Worker lifecycle events include optional
 `agent_session_id` when the worker was created for a daemon-owned AgentSession.
 For session-bound project workspaces, the daemon worker runtime creates
-`<project>/.cadis/worktrees/<worker-id>/`, emits the active worktree path in
+`<project>/.{{PROJECT_SLUG}}/worktrees/<worker-id>/`, emits the active worktree path in
 `worker.started`, and writes profile-scoped artifacts before `worker.completed`
 or `worker.failed`. Terminal worker events move active worktrees to
 `review_pending` or `cleanup_pending` according to cleanup policy; patch apply
@@ -179,8 +179,8 @@ and cleanup remain separate flows, and this cleanup slice records intent without
 removing files.
 
 The worker command baseline uses this same event shape. When a worker reaches
-completion, `cadisd` runs a bounded validation command with cwd inside the
-CADIS-owned worker worktree and records the redacted command report in bounded
+completion, `{{PROJECT_SLUG}}d` runs a bounded validation command with cwd inside the
+{{PROJECT_NAME}}-owned worker worktree and records the redacted command report in bounded
 `worker.log.delta` summaries plus profile-scoped artifacts such as
 `summary.md`, `patch.diff`, `changed-files.json`, `test-report.json`, and
 `memory-candidates.jsonl`. HUD, Tauri, and code work panel clients must not
@@ -286,7 +286,7 @@ tool.completed, tool.failed, or future tool.cancelled
 ```
 
 Approval is not a client-side execution grant. After `approval.respond` approves
-a risky tool, `cadisd` must revalidate the current daemon state before
+a risky tool, `{{PROJECT_SLUG}}d` must revalidate the current daemon state before
 execution. If the approval expired, the workspace grant changed, a target path is
 denied, secret access is not explicitly authorized, the session was cancelled,
 or the execution backend is unavailable, the daemon emits `approval.resolved`
@@ -301,12 +301,12 @@ Async tool cancellation is still future work; until a typed `tool.cancelled`
 event lands in the protocol crate, cancellation must not be marked complete in
 the checklist.
 
-`shell.run` input must resolve to a registered workspace or CADIS-owned worker
+`shell.run` input must resolve to a registered workspace or {{PROJECT_NAME}}-owned worker
 worktree before execution. The execution backend must use an explicit cwd,
 bounded stdout/stderr, exit-code reporting, timeout, and cleanup on
 cancellation. A minimal environment allowlist is required before broad worker
 command/test execution is considered complete; provider keys, auth tokens, SSH
-agent details, and CADIS secrets must not be passed implicitly.
+agent details, and {{PROJECT_NAME}} secrets must not be passed implicitly.
 
 `file.patch` input must be previewable before approval and must apply only to
 daemon-normalized workspace-relative paths. The current supported schema is a
@@ -331,7 +331,7 @@ conservative structured patch:
 ```
 
 The backend fails closed on absolute paths, path traversal, symlink escape,
-protected workspace metadata paths such as `.git` and `.cadis`, secret-like paths
+protected workspace metadata paths such as `.git` and `.{{PROJECT_SLUG}}`, secret-like paths
 such as `.env`, key files, token files, credential files, and replace-context
 mismatches. Unified diff application is reserved for a later patch backend.
 Patch writes should be atomic where practical.
@@ -341,13 +341,13 @@ baseline runs only the daemon-owned validation command inside the active worker
 worktree and records bounded redacted output in events/artifacts. Future
 configurable worker commands/tests must use daemon-owned policy and cwd inside
 the worker worktree. Applying a worker artifact to the parent workspace uses
-`worker.apply`, which must resolve a CADIS-owned worker/worktree record, require
+`worker.apply`, which must resolve a {{PROJECT_NAME}}-owned worker/worktree record, require
 an active write grant for the worker owner on the parent workspace, emit approval
 events before mutation, preflight the patch, reject protected metadata,
 secret-like paths, and dirty affected paths, and fail closed with rollback
 reporting if apply fails. `worker.completed` alone does not authorize
 parent-checkout mutation. Cleanup/removal of a worker worktree is also a
-separate approval-gated flow and must require a CADIS-owned worker/worktree
+separate approval-gated flow and must require a {{PROJECT_NAME}}-owned worker/worktree
 record.
 
 `patch.created` and `test.result` are summary events for code-work presentation.
@@ -357,9 +357,9 @@ redacted status and summary. Full review details belong in worker artifacts or a
 future daemon read-only artifact projection, not direct HUD filesystem reads.
 
 `workspace.register` adds or replaces a profile-local project workspace registry
-entry. CADIS persists the registry under
-`~/.cadis/profiles/<profile>/workspaces/registry.toml` and rejects overly broad
-or protected roots such as `/`, the user home directory, `CADIS_HOME`, and known
+entry. {{PROJECT_NAME}} persists the registry under
+`~/.{{PROJECT_SLUG}}/profiles/<profile>/workspaces/registry.toml` and rejects overly broad
+or protected roots such as `/`, the user home directory, `{{PROJECT_NAME}}_HOME`, and known
 secret/system directories.
 
 ```json
@@ -375,14 +375,14 @@ secret/system directories.
     "aliases": ["example"],
     "vcs": "git",
     "trusted": true,
-    "worktree_root": ".cadis/worktrees",
-    "artifact_root": ".cadis/artifacts"
+    "worktree_root": ".{{PROJECT_SLUG}}/worktrees",
+    "artifact_root": ".{{PROJECT_SLUG}}/artifacts"
   }
 }
 ```
 
 `workspace.grant` creates an active grant for a registered workspace and persists
-it under `~/.cadis/profiles/<profile>/workspaces/grants.jsonl`. Empty `access`
+it under `~/.{{PROJECT_SLUG}}/profiles/<profile>/workspaces/grants.jsonl`. Empty `access`
 defaults to `read`. Grants without `agent_id` apply to the default local runtime
 context; grants with `agent_id` require matching `tool.call.agent_id`.
 
@@ -423,8 +423,8 @@ daemon.status.response
   "status": "ok",
   "version": "0.1.0",
   "protocol_version": "0.2",
-  "cadis_home": "/home/user/.cadis",
-  "socket_path": "/run/user/1000/cadis/cadisd.sock",
+  "{{PROJECT_SLUG}}_home": "/home/user/.{{PROJECT_SLUG}}",
+  "socket_path": "/run/user/1000/{{PROJECT_SLUG}}/{{PROJECT_SLUG}}d.sock",
   "sessions": 0,
   "model_provider": "auto",
   "uptime_seconds": 3,
@@ -544,8 +544,8 @@ cancellation and broader async interrupts remain later runtime work.
       "aliases": ["example"],
       "vcs": "git",
       "trusted": true,
-      "worktree_root": ".cadis/worktrees",
-      "artifact_root": ".cadis/artifacts"
+      "worktree_root": ".{{PROJECT_SLUG}}/worktrees",
+      "artifact_root": ".{{PROJECT_SLUG}}/artifacts"
     }
   ],
   "grants": [
@@ -595,12 +595,12 @@ cancellation and broader async interrupts remain later runtime work.
     },
     {
       "provider": "echo",
-      "model": "cadis-local-fallback",
-      "display_name": "CADIS local fallback",
+      "model": "{{PROJECT_SLUG}}-local-fallback",
+      "display_name": "{{PROJECT_NAME}} local fallback",
       "capabilities": ["offline"],
       "readiness": "fallback",
       "effective_provider": "echo",
-      "effective_model": "cadis-local-fallback",
+      "effective_model": "{{PROJECT_SLUG}}-local-fallback",
       "fallback": true
     }
   ]
@@ -609,7 +609,7 @@ cancellation and broader async interrupts remain later runtime work.
 
 `readiness` is one of `ready`, `fallback`, `requires_configuration`, or
 `unavailable`. `fallback: true` means the entry is not a real model provider.
-For `auto`, CADIS reports the configured Ollama model as the primary effective
+For `auto`, {{PROJECT_NAME}} reports the configured Ollama model as the primary effective
 model and marks the entry as fallback-capable because runtime requests can still
 fall back to `echo` if Ollama is not ready. `models.list` uses daemon config so
 clients can display the configured Ollama/OpenAI model IDs instead of generic
@@ -625,9 +625,9 @@ Model-backed `message.delta` and `message.completed` payloads may include a
   "agent_id": "codex",
   "agent_name": "Codex",
   "model": {
-    "requested_model": "echo/cadis-local-fallback",
+    "requested_model": "echo/{{PROJECT_SLUG}}-local-fallback",
     "effective_provider": "echo",
-    "effective_model": "cadis-local-fallback",
+    "effective_model": "{{PROJECT_SLUG}}-local-fallback",
     "fallback": false
   }
 }
@@ -638,7 +638,7 @@ Model-backed `message.delta` and `message.completed` payloads may include a
 actually served the request. When fallback occurs, `fallback` is true and
 `fallback_reason` may contain a redacted reason suitable for logs and clients.
 
-For `message.send`, `cadisd` first publishes daemon-owned session, route, and
+For `message.send`, `{{PROJECT_SLUG}}d` first publishes daemon-owned session, route, and
 agent status events, then runs provider generation outside the runtime mutex.
 Providers with stream callbacks cause `message.delta` events to be fanned out
 as callbacks arrive; providers without native streaming still produce the same
@@ -784,13 +784,13 @@ Later:
 }
 ```
 
-`target_agent_id` is optional. If it is absent, `cadisd` may resolve a leading
+`target_agent_id` is optional. If it is absent, `{{PROJECT_SLUG}}d` may resolve a leading
 `@agent` mention against agent ID, display name, or role. If a client supplies
-`target_agent_id` from a matching leading mention, `cadisd` strips that mention
+`target_agent_id` from a matching leading mention, `{{PROJECT_SLUG}}d` strips that mention
 from the prompt sent to the provider while preserving the request `content` as
 the client-authored input.
 
-When the resolved target is the main orchestrator, `cadisd` also recognizes
+When the resolved target is the main orchestrator, `{{PROJECT_SLUG}}d` also recognizes
 explicit, text-level routing actions without changing protocol version `0.1`:
 
 ```text
@@ -824,7 +824,7 @@ actions.
 {
   "type": "agent.rename",
   "agent_id": "main",
-  "display_name": "CADIS"
+  "display_name": "{{PROJECT_NAME}}"
 }
 ```
 
@@ -850,11 +850,11 @@ actions.
 }
 ```
 
-`cadisd` stores the specialist profile on the target agent and confirms with
+`{{PROJECT_SLUG}}d` stores the specialist profile on the target agent and confirms with
 `agent.specialist.changed`. Future `message.send` requests routed to that agent
-include the specialist persona in the daemon-built model prompt. CADIS also
+include the specialist persona in the daemon-built model prompt. {{PROJECT_NAME}} also
 applies a daemon-owned Humanizer skill before responses so chat stays natural,
-concise, and in the user's language. The main CADIS agent also receives a
+concise, and in the user's language. The main {{PROJECT_NAME}} agent also receives a
 daemon-owned runtime summary of agent/session/worker state so it can orchestrate
 with awareness of what other agents are doing.
 
@@ -893,7 +893,7 @@ Implicit model-driven spawning is reserved for a later runtime track.
   "patch": {
     "hud": {
       "theme": "arc",
-      "avatar_style": "wulan_arc",
+      "avatar_style": "{{AVATAR_SLUG}}_arc",
       "background_opacity": 82
     }
   }
@@ -922,7 +922,7 @@ voice ID.
 ```json
 {
   "type": "voice.preflight",
-  "surface": "cadis-hud",
+  "surface": "{{PROJECT_SLUG}}-hud",
   "summary": "ready",
   "checks": [
     {
@@ -954,7 +954,7 @@ aliases such as `pass` and `fail` and normalizes them before emitting
 ```json
 {
   "type": "voice.preview",
-  "text": "Halo, saya CADIS. Audio test berhasil.",
+  "text": "Halo, saya {{PROJECT_NAME}}. Audio test berhasil.",
   "prefs": {
     "voice_id": "id-ID-GadisNeural",
     "rate": 0,

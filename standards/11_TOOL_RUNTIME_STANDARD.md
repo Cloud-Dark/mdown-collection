@@ -1,8 +1,8 @@
-# CADIS Tool Runtime Standard
+# {{PROJECT_NAME}} Tool Runtime Standard
 
 ## 1. Purpose
 
-This standard defines how native CADIS tools are registered, validated, executed, observed, and governed. Tools are a privileged runtime surface. They must be designed for safety, auditability, and predictable behavior.
+This standard defines how native {{PROJECT_NAME}} tools are registered, validated, executed, observed, and governed. Tools are a privileged runtime surface. They must be designed for safety, auditability, and predictable behavior.
 
 ## 2. Tool Registry
 
@@ -50,7 +50,7 @@ Current implementation baseline:
   invoking `git.worktree.create`; that event metadata is intent, not filesystem
   mutation.
 - Worker command execution baseline runs a bounded daemon-owned validation
-  command inside CADIS-owned worker worktrees and records result artifacts.
+  command inside {{PROJECT_NAME}}-owned worker worktrees and records result artifacts.
   Configurable worker command/test execution remains future work and must stay
   daemon-owned, policy-gated, and isolated to the worker worktree.
 
@@ -151,7 +151,7 @@ protocol crate and runtime emit it.
 Approval authorizes a daemon attempt; it does not bypass policy or grant a
 client permission to run the action.
 
-Before an approved risky tool starts, `cadisd` must revalidate:
+Before an approved risky tool starts, `{{PROJECT_SLUG}}d` must revalidate:
 
 - approval exists, is still pending at response time, and is not expired
 - tool name still resolves to the same registered contract
@@ -184,8 +184,8 @@ Requirements:
 Commands that mutate system state, use `sudo`, install packages, delete files, alter protected git refs, or access secrets must require approval.
 
 Track D implementation must keep `shell.run` inside a registered workspace or
-CADIS-owned worker worktree. The target environment starts from a minimal
-allowlist; provider keys, auth tokens, SSH agent details, and CADIS secrets are
+{{PROJECT_NAME}}-owned worker worktree. The target environment starts from a minimal
+allowlist; provider keys, auth tokens, SSH agent details, and {{PROJECT_NAME}} secrets are
 not passed unless a later explicit secret-access policy permits it.
 Cancellation must stop the child process and clean up any process group or
 temporary files where the platform supports it.
@@ -245,11 +245,11 @@ Rules:
   --no-color --` with a workspace-relative pathspec guard and bounded,
   redacted output.
 - Worktree creation must validate repository state.
-- Worktree cleanup must avoid deleting paths not created by CADIS.
+- Worktree cleanup must avoid deleting paths not created by {{PROJECT_NAME}}.
 - `git.worktree.create` must consume daemon worktree intent, not ad hoc client
   paths, and must emit a later event that moves the worktree state from
   `planned` to `active` only after successful creation.
-- `git.worktree.remove` must require a CADIS-owned worker/worktree record and
+- `git.worktree.remove` must require a {{PROJECT_NAME}}-owned worker/worktree record and
   preserve artifacts unless an explicit cleanup policy says otherwise.
 - Terminal worker states such as `review_pending` and `cleanup_pending` are
   cleanup planning metadata, not deletion. Actual worktree removal must be a
@@ -298,7 +298,7 @@ Required tests:
 - file patch conflict handling
 - worker command/test execution stays inside the worker worktree
 - worker result artifacts are redacted before persistence
-- worker cleanup refuses paths without CADIS-owned worktree metadata
+- worker cleanup refuses paths without {{PROJECT_NAME}}-owned worktree metadata
 - tool lifecycle event ordering
 - redaction before persistence
 - policy denial prevents execution

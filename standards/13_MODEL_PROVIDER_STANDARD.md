@@ -1,8 +1,8 @@
-# CADIS Model Provider Standard
+# {{PROJECT_NAME}} Model Provider Standard
 
 ## 1. Purpose
 
-This standard defines the contract for model providers in CADIS. Providers supply model output, but they do not own sessions, policy, tools, approvals, persistence, or UI state.
+This standard defines the contract for model providers in {{PROJECT_NAME}}. Providers supply model output, but they do not own sessions, policy, tools, approvals, persistence, or UI state.
 
 ## 2. Provider Boundary
 
@@ -27,7 +27,7 @@ Provider implementations must not:
 
 ## 3. Initial Providers
 
-CADIS should support these providers according to the implementation plan:
+{{PROJECT_NAME}} should support these providers according to the implementation plan:
 
 | Provider | Priority |
 | --- | --- |
@@ -62,7 +62,7 @@ The HUD and CLI may display capability data, but the daemon remains authoritativ
 
 ## 5. Configuration
 
-Provider config belongs in `~/.cadis/config.toml` with environment variable overrides where appropriate.
+Provider config belongs in `~/.{{PROJECT_SLUG}}/config.toml` with environment variable overrides where appropriate.
 
 Rules:
 
@@ -70,7 +70,7 @@ Rules:
 - Prefer environment variables for secrets.
 - Config parsing must produce actionable errors.
 - Missing optional providers must not prevent daemon startup.
-- `cadis doctor` should report provider readiness without exposing secrets.
+- `{{PROJECT_SLUG}} doctor` should report provider readiness without exposing secrets.
 
 ## 6. Streaming Contract
 
@@ -84,7 +84,7 @@ model.failed
 model.cancelled
 ```
 
-The daemon maps provider events into CADIS session events such as `message.delta` and `message.completed`.
+The daemon maps provider events into {{PROJECT_NAME}} session events such as `message.delta` and `message.completed`.
 
 Streaming rules:
 
@@ -98,13 +98,13 @@ Streaming rules:
   non-retryable `model_cancelled` error, and emit `model.cancelled` when they
   can resolve invocation metadata.
 - Support upstream cancellation where the provider transport permits it.
-- Convert provider-specific stop reasons to CADIS stop metadata.
+- Convert provider-specific stop reasons to {{PROJECT_NAME}} stop metadata.
 - Bound memory usage for long streams.
 - Surface partial output carefully when errors occur.
 
 ## 7. Error Mapping
 
-Provider errors must become structured CADIS errors.
+Provider errors must become structured {{PROJECT_NAME}} errors.
 
 Required categories:
 

@@ -2,8 +2,8 @@
 
 ## Status
 
-Linux binary artifacts (`cadisd`, `cadis`) are available from
-[GitHub Releases](https://github.com/Growth-Circle/cadis/releases). Source
+Linux binary artifacts (`{{PROJECT_SLUG}}d`, `{{PROJECT_SLUG}}`) are available from
+[GitHub Releases](https://github.com/Growth-Circle/{{PROJECT_SLUG}}/releases). Source
 builds remain the primary path for the HUD. macOS is currently a Rust
 source-validation baseline only, and Windows is limited to portable-crate
 validation until runtime transport, shell, path, sandbox, HUD, and audio
@@ -26,48 +26,48 @@ For the HUD (optional):
 ## From Source
 
 ```bash
-git clone https://github.com/Growth-Circle/cadis.git
-cd cadis
+git clone https://github.com/Growth-Circle/{{PROJECT_SLUG}}.git
+cd {{PROJECT_SLUG}}
 cargo build --release
 ```
 
 Core binaries:
 
 ```text
-target/release/cadis
-target/release/cadisd
+target/release/{{PROJECT_SLUG}}
+target/release/{{PROJECT_SLUG}}d
 ```
 
-The canonical desktop HUD lives in `apps/cadis-hud` and is built with pnpm and
-Tauri. The Rust workspace also contains `crates/cadis-hud` (now
-`cadis-hud-legacy`), a deprecated native eframe prototype kept for reference.
+The canonical desktop HUD lives in `apps/{{PROJECT_SLUG}}-hud` and is built with pnpm and
+Tauri. The Rust workspace also contains `crates/{{PROJECT_SLUG}}-hud` (now
+`{{PROJECT_SLUG}}-hud-legacy`), a deprecated native eframe prototype kept for reference.
 All new HUD work should use the Tauri app.
 
-The renderer-neutral Wulan avatar state engine is a library crate,
-`crates/cadis-avatar`; it is not an installed binary.
+The renderer-neutral {{AVATAR_NAME}} avatar state engine is a library crate,
+`crates/{{PROJECT_SLUG}}-avatar`; it is not an installed binary.
 
 ## First Run
 
 Start the daemon:
 
 ```bash
-target/release/cadisd --check
-target/release/cadisd
+target/release/{{PROJECT_SLUG}}d --check
+target/release/{{PROJECT_SLUG}}d
 ```
 
 In another terminal:
 
 ```bash
-target/release/cadis status
-target/release/cadis doctor
-target/release/cadis models
-target/release/cadis chat "hello"
+target/release/{{PROJECT_SLUG}} status
+target/release/{{PROJECT_SLUG}} doctor
+target/release/{{PROJECT_SLUG}} models
+target/release/{{PROJECT_SLUG}} chat "hello"
 ```
 
 Launch the canonical desktop HUD from source:
 
 ```bash
-cd apps/cadis-hud
+cd apps/{{PROJECT_SLUG}}-hud
 corepack enable
 pnpm install
 pnpm tauri:dev
@@ -76,28 +76,28 @@ pnpm tauri:dev
 For a custom socket:
 
 ```bash
-target/release/cadisd --socket /tmp/cadis-hud.sock --dev-echo
-cd apps/cadis-hud
-CADIS_HUD_SOCKET=/tmp/cadis-hud.sock pnpm tauri:dev
+target/release/{{PROJECT_SLUG}}d --socket /tmp/{{PROJECT_SLUG}}-hud.sock --dev-echo
+cd apps/{{PROJECT_SLUG}}-hud
+{{PROJECT_NAME}}_HUD_SOCKET=/tmp/{{PROJECT_SLUG}}-hud.sock pnpm tauri:dev
 ```
 
 For TCP transport (required on Windows, optional elsewhere):
 
 ```bash
-target/release/cadisd --tcp-port 7433
-cd apps/cadis-hud
-CADIS_TCP_PORT=7433 pnpm tauri:dev
+target/release/{{PROJECT_SLUG}}d --tcp-port 7433
+cd apps/{{PROJECT_SLUG}}-hud
+{{PROJECT_NAME}}_TCP_PORT=7433 pnpm tauri:dev
 ```
 
 To build the HUD frontend and native Tauri app locally:
 
 ```bash
-cd apps/cadis-hud
+cd apps/{{PROJECT_SLUG}}-hud
 pnpm build
 pnpm tauri:build
 ```
 
-The HUD is a protocol client of `cadisd`; it does not store credentials, execute
+The HUD is a protocol client of `{{PROJECT_SLUG}}d`; it does not store credentials, execute
 tools, own approval state, or hold durable runtime state. All authority lives in
 the daemon.
 
@@ -105,10 +105,10 @@ the daemon.
 
 The daemon supports two transports:
 
-- **Unix socket** (default on Linux/macOS): `$XDG_RUNTIME_DIR/cadis/cadisd.sock`
-  or `~/.cadis/run/cadisd.sock`.
+- **Unix socket** (default on Linux/macOS): `$XDG_RUNTIME_DIR/{{PROJECT_SLUG}}/{{PROJECT_SLUG}}d.sock`
+  or `~/.{{PROJECT_SLUG}}/run/{{PROJECT_SLUG}}d.sock`.
 - **TCP** (default on Windows, optional elsewhere): `127.0.0.1:7433`. Set
-  `CADIS_TCP_PORT` or use `cadisd --tcp-port 7433`.
+  `{{PROJECT_NAME}}_TCP_PORT` or use `{{PROJECT_SLUG}}d --tcp-port 7433`.
 
 The Tauri HUD, CLI, and legacy eframe HUD all support both transports. On
 Windows, TCP is used automatically since Unix sockets are not available.
@@ -123,16 +123,16 @@ bridge still owns local capture and playback mechanics.
 
 ## Model Providers
 
-The default provider mode is `auto`: CADIS tries Ollama at
+The default provider mode is `auto`: {{PROJECT_NAME}} tries Ollama at
 `http://127.0.0.1:11434` and falls back to a local credential-free response if
-Ollama is not ready. When Ollama is running, CADIS streams native NDJSON deltas
+Ollama is not ready. When Ollama is running, {{PROJECT_NAME}} streams native NDJSON deltas
 from `/api/generate` into daemon `message.delta` events.
 
 To use OpenAI, keep the API key in the daemon environment and set the provider
-in `~/.cadis/config.toml`:
+in `~/.{{PROJECT_SLUG}}/config.toml`:
 
 ```bash
-export CADIS_OPENAI_API_KEY="..."
+export {{PROJECT_NAME}}_OPENAI_API_KEY="..."
 ```
 
 ```toml
@@ -158,14 +158,14 @@ codex login
 provider = "codex-cli"
 ```
 
-CADIS does not fork Codex CLI and does not read or copy `~/.codex/auth.json`.
+{{PROJECT_NAME}} does not fork Codex CLI and does not read or copy `~/.codex/auth.json`.
 
 ## Local State
 
-CADIS stores local state in:
+{{PROJECT_NAME}} stores local state in:
 
 ```text
-~/.cadis
+~/.{{PROJECT_SLUG}}
 ```
 
 Current desktop MVP contents:
@@ -181,15 +181,15 @@ tokens/
 approvals/
 ```
 
-The daemon socket defaults to `$XDG_RUNTIME_DIR/cadis/cadisd.sock` when
-`XDG_RUNTIME_DIR` exists, otherwise `~/.cadis/run/cadisd.sock`.
+The daemon socket defaults to `$XDG_RUNTIME_DIR/{{PROJECT_SLUG}}/{{PROJECT_SLUG}}d.sock` when
+`XDG_RUNTIME_DIR` exists, otherwise `~/.{{PROJECT_SLUG}}/run/{{PROJECT_SLUG}}d.sock`.
 
 Do not copy local `.env` files, Codex auth JSON, logs, sockets, crash dumps,
 HAR traces, or Tauri bundle output into commits or release source archives.
 
 ## Optional Ollama Config
 
-Create `~/.cadis/config.toml`:
+Create `~/.{{PROJECT_SLUG}}/config.toml`:
 
 ```toml
 [model]
@@ -202,7 +202,7 @@ Then run:
 
 ```bash
 ollama pull llama3.2
-target/release/cadis chat "hello"
+target/release/{{PROJECT_SLUG}} chat "hello"
 ```
 
 ## Known Limitations
@@ -216,7 +216,7 @@ target/release/cadis chat "hello"
 - Full async tool cancellation is not implemented yet.
 - Telegram, mobile clients, and production daemon-owned voice output are not
   implemented yet.
-- The native Wulan avatar engine is not implemented yet; the crate provides the
+- The native {{AVATAR_NAME}} avatar engine is not implemented yet; the crate provides the
   renderer-neutral state contract only.
 - Concurrent-edit protection for shared state is not production-hardened yet.
 - The Tauri HUD is source-built; packaged desktop HUD artifacts are not

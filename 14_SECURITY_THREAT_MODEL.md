@@ -2,7 +2,7 @@
 
 ## 1. Scope
 
-This threat model covers the local CADIS runtime:
+This threat model covers the local {{PROJECT_NAME}} runtime:
 
 - daemon
 - CLI
@@ -21,7 +21,7 @@ This threat model covers the local CADIS runtime:
 | --- | --- |
 | Provider API keys | Can incur cost or expose account access |
 | Telegram bot token | Can allow remote control abuse |
-| Local files | CADIS can read and edit project files |
+| Local files | {{PROJECT_NAME}} can read and edit project files |
 | Profile and agent homes | May contain durable memory, instructions, policy, sessions, and channel state |
 | Shell access | Commands can change or damage the machine |
 | Git repositories | Agents can change source code |
@@ -51,7 +51,7 @@ Important boundaries:
 - Telegram messages are remote input
 - tool arguments are untrusted until validated
 - profile homes and agent homes are state boundaries, not sandboxes
-- project `.cadis/` metadata is untrusted input until validated by the daemon
+- project `.{{PROJECT_SLUG}}/` metadata is untrusted input until validated by the daemon
 - worker worktrees are scoped execution roots, not approval bypasses
 - provider responses are untrusted
 - logs must be redacted before persistence
@@ -77,8 +77,8 @@ Important boundaries:
 | T-015 | Risky native tool executes after malformed or missing approval state | Unknown tools are denied, risky placeholders create persisted approvals, expired or missing approvals fail closed, and approved risky placeholders do not execute in the baseline |
 | T-016 | Agent home is accidentally used as project cwd and leaks memory or policy files to tools | Agent home and project workspace are separate typed records; file/shell/git tools require workspace grants |
 | T-017 | Broad or stale workspace grant exposes `$HOME`, `/`, system paths, or cloud credential directories | Grant validation rejects broad roots, applies expiry, canonicalizes paths, rejects symlink escape, and checks denied paths |
-| T-018 | Worker edits parent checkout instead of isolated branch | Coding workers default to project `.cadis/worktrees/<worker-id>/` and receive write/exec grants only for that worktree |
-| T-019 | Project `.cadis/media/` stores secrets, raw transcripts, or untracked private provenance | Media manifests are redacted, secrets and raw transcripts are forbidden, and large binaries are ignored unless explicitly tracked |
+| T-018 | Worker edits parent checkout instead of isolated branch | Coding workers default to project `.{{PROJECT_SLUG}}/worktrees/<worker-id>/` and receive write/exec grants only for that worktree |
+| T-019 | Project `.{{PROJECT_SLUG}}/media/` stores secrets, raw transcripts, or untracked private provenance | Media manifests are redacted, secrets and raw transcripts are forbidden, and large binaries are ignored unless explicitly tracked |
 
 ## 5. Security Requirements
 
@@ -91,7 +91,7 @@ Important boundaries:
 - Keep audit events for approvals and tools.
 - Future memory writes must be daemon-owned, provenance-backed, and redacted
   before Markdown, JSONL, SQLite, or vector indexing. See `25_MEMORY_CONCEPT.md`.
-- Optional Wulan face tracking must remain local to the renderer process. Raw
+- Optional {{AVATAR_NAME}} face tracking must remain local to the renderer process. Raw
   frames, landmarks, embeddings, identity labels, and biometric templates must
   not be sent to model providers, remote relays, logs, diagnostics, crash
   reports, or telemetry by default.
@@ -100,7 +100,7 @@ Important boundaries:
 - Denied paths must include SSH/GPG/cloud credential directories, profile
   `.env` files, profile secret stores, channel token directories, and system
   paths such as `/etc`, `/dev`, `/proc`, and `/sys`.
-- Project `.cadis/media/` may hold generated media and manifests, but must not
+- Project `.{{PROJECT_SLUG}}/media/` may hold generated media and manifests, but must not
   contain provider tokens, raw channel tokens, secrets, or raw session
   transcripts.
 

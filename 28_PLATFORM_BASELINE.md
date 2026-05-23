@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This document defines CADIS platform support during the beta runtime
+This document defines {{PROJECT_NAME}} platform support during the beta runtime
 slice. It separates primary runtime targets from source validation so docs and
 CI do not overstate current support.
 
@@ -15,14 +15,14 @@ CI do not overstate current support.
 | Windows | Full test suite (TCP transport), no packaged runtime yet | Full Rust workspace clippy and `cargo test --workspace` on `windows-latest`; Unix socket tests are `#[cfg(unix)]` only | No packaged daemon, HUD, or audio runtime claim yet |
 | Android | Future remote controller target | None | Not a local runtime target |
 
-Linux remains the first platform for `cadisd`, the CLI, local Unix socket
+Linux remains the first platform for `{{PROJECT_SLUG}}d`, the CLI, local Unix socket
 transport, the Tauri HUD, HUD voice capture/playback bridges, and desktop
 runtime behavior.
 
-The canonical HUD (`apps/cadis-hud`) is a Tauri + React application that
+The canonical HUD (`apps/{{PROJECT_SLUG}}-hud`) is a Tauri + React application that
 supports both Unix socket and TCP transport. On Linux and macOS it prefers Unix
 sockets; on Windows it uses TCP (`127.0.0.1:7433`) automatically. The legacy
-eframe HUD (`crates/cadis-hud`, now `cadis-hud-legacy`) is deprecated and kept
+eframe HUD (`crates/{{PROJECT_SLUG}}-hud`, now `{{PROJECT_SLUG}}-hud-legacy`) is deprecated and kept
 for reference only.
 
 macOS validation proves that the full Rust workspace compiles, lints, and passes
@@ -34,7 +34,7 @@ supported for users on macOS.
 Windows validation now runs the full Rust workspace test suite on
 `windows-latest`. Unix socket integration tests are gated behind `#[cfg(unix)]`
 and are automatically skipped. TCP transport is used where applicable. The Tauri
-HUD (`apps/cadis-hud`) now supports TCP transport, enabling future Windows HUD
+HUD (`apps/{{PROJECT_SLUG}}-hud`) now supports TCP transport, enabling future Windows HUD
 use once daemon and shell adapters are validated. Packaged daemon, HUD, voice
 bridge, and shell behavior are not yet supported for users on Windows.
 
@@ -73,14 +73,14 @@ The release workflow at `.github/workflows/release.yml` builds binaries for:
 - `x86_64-unknown-linux-gnu` (native)
 - `aarch64-unknown-linux-gnu` (cross-compiled)
 
-Release artifacts include `cadis` and `cadisd` binaries with SHA-256 checksums.
-The Tauri HUD (`apps/cadis-hud`) is not included in release artifacts and must
-be built from source. The npm package (`@growthcircle/cadis`) installs daemon
+Release artifacts include `{{PROJECT_SLUG}}` and `{{PROJECT_SLUG}}d` binaries with SHA-256 checksums.
+The Tauri HUD (`apps/{{PROJECT_SLUG}}-hud`) is not included in release artifacts and must
+be built from source. The npm package (`@growthcircle/{{PROJECT_SLUG}}`) installs daemon
 and CLI only.
 
 ## 5. Promotion Requirements
 
-Before CADIS can claim runtime support beyond Linux, the relevant platform must
+Before {{PROJECT_NAME}} can claim runtime support beyond Linux, the relevant platform must
 have:
 
 - local daemon transport that does not depend on Unix sockets where unsupported

@@ -2,8 +2,8 @@
 
 ## Purpose
 
-This document adapts Wulan's CADIS memory concept into the CADIS architecture roadmap.
-It defines how long-lived memory should work once CADIS moves beyond the current
+This document adapts {{AVATAR_NAME}}'s {{PROJECT_NAME}} memory concept into the {{PROJECT_NAME}} architecture roadmap.
+It defines how long-lived memory should work once {{PROJECT_NAME}} moves beyond the current
 desktop MVP.
 
 Memory is future work. It is not part of the v0.1 runtime contract unless a later
@@ -11,25 +11,25 @@ decision record changes scope.
 
 ## Contribution Context
 
-- Contributor: Wulan.
+- Contributor: {{AVATAR_NAME}}.
 - Source contribution: `memory-concept.md`, design draft dated 2026-04-26.
 - Status: concept, future work.
 - Scope: daemon-owned memory architecture for sessions, agents, projects, tasks,
   delegation, and user preferences.
 
-Wulan's central framing is:
+{{AVATAR_NAME}}'s central framing is:
 
 ```text
 memory store != model context
 ```
 
-CADIS should store memory outside the prompt, then inject only a bounded,
+{{PROJECT_NAME}} should store memory outside the prompt, then inject only a bounded,
 ranked, compressed memory capsule into an agent turn.
 
 ## Problem
 
 A multi-agent runtime cannot safely treat memory as one giant transcript, one
-vector database, or one ungoverned prompt prefix. CADIS needs memory that is:
+vector database, or one ungoverned prompt prefix. {{PROJECT_NAME}} needs memory that is:
 
 - local-first and inspectable
 - scoped per user, project, agent, task, and session
@@ -57,9 +57,9 @@ vector database, or one ungoverned prompt prefix. CADIS needs memory that is:
 - No silent mutation of persona, policy, or security rules.
 - No persistence of secrets, raw credentials, or unredacted sensitive artifacts.
 
-## Proposed CADIS Model
+## Proposed {{PROJECT_NAME}} Model
 
-CADIS should implement memory as daemon infrastructure owned by `cadisd`.
+{{PROJECT_NAME}} should implement memory as daemon infrastructure owned by `{{PROJECT_SLUG}}d`.
 Agents may request, propose, and use memory, but the runtime controls:
 
 - scope
@@ -85,7 +85,7 @@ evidence such as a session id, task id, file path, tool result, or commit.
 
 ## Memory Layers
 
-CADIS should treat memory as layered state:
+{{PROJECT_NAME}} should treat memory as layered state:
 
 | Layer | Name | Purpose |
 | --- | --- | --- |
@@ -118,7 +118,7 @@ Markdown files
 Suggested layout:
 
 ```text
-~/.cadis/
+~/.{{PROJECT_SLUG}}/
 |-- memory/
 |   |-- ledger.jsonl
 |   |-- candidates.jsonl
@@ -137,7 +137,7 @@ Suggested layout:
 |   |-- delegation/
 |   |-- providers/
 |   `-- indexes/
-|       `-- cadis-memory.sqlite
+|       `-- {{PROJECT_SLUG}}-memory.sqlite
 |-- agents/
 |   `-- <agent-id>/
 |       |-- PERSONA.md
@@ -148,7 +148,7 @@ Suggested layout:
     `-- task_<id>.jsonl
 ```
 
-Markdown gives users an inspectable source. SQLite gives CADIS fast filtering,
+Markdown gives users an inspectable source. SQLite gives {{PROJECT_NAME}} fast filtering,
 dedupe, ACL checks, freshness checks, and FTS. The ledger gives replay,
 debugging, and crash recovery.
 
@@ -251,7 +251,7 @@ context.compiled
 ```
 
 HUD, CLI, Telegram, and voice clients should only request or display these
-operations. `cadisd` remains the authority for ACL, promotion, persistence, and
+operations. `{{PROJECT_SLUG}}d` remains the authority for ACL, promotion, persistence, and
 context compilation.
 
 ## Config Implications
@@ -262,7 +262,7 @@ Future configuration may look like:
 [memory]
 enabled = true
 backend = "sqlite"
-ledger = "~/.cadis/memory/ledger.jsonl"
+ledger = "~/.{{PROJECT_SLUG}}/memory/ledger.jsonl"
 human_files = true
 auto_promote_daily = true
 auto_promote_user_preferences = "explicit_only"
@@ -284,7 +284,7 @@ These keys are not accepted config yet. They should move into
 
 ## Security And Privacy
 
-Memory increases the blast radius of bad persistence. CADIS must apply these
+Memory increases the blast radius of bad persistence. {{PROJECT_NAME}} must apply these
 rules before enabling durable memory:
 
 - redact secrets before ledger, Markdown, SQLite, and vector indexing
@@ -304,7 +304,7 @@ Suggested memory phases:
 
 | Phase | Outcome |
 | --- | --- |
-| M0 | `cadis-memory` crate, record types, JSONL ledger, file-backed root. |
+| M0 | `{{PROJECT_SLUG}}-memory` crate, record types, JSONL ledger, file-backed root. |
 | M1 | Agent capsules, context compiler, memory contract injection. |
 | M2 | SQLite metadata, FTS search, scope filtering, token-budget packing. |
 | M3 | Candidate extraction, validation, promotion, dedupe, conflicts. |
@@ -315,11 +315,11 @@ Suggested memory phases:
 The first useful CLI should be:
 
 ```bash
-cadis memory propose ...
-cadis memory search "auth middleware" --project <project-id>
-cadis memory candidates list
-cadis memory promote <memory-id>
-cadis context preview --agent codex --task <task-id>
+{{PROJECT_SLUG}} memory propose ...
+{{PROJECT_SLUG}} memory search "auth middleware" --project <project-id>
+{{PROJECT_SLUG}} memory candidates list
+{{PROJECT_SLUG}} memory promote <memory-id>
+{{PROJECT_SLUG}} context preview --agent codex --task <task-id>
 ```
 
 ## Open Questions
@@ -333,7 +333,7 @@ cadis context preview --agent codex --task <task-id>
 
 ## References
 
-- Wulan, `memory-concept.md`, CADIS memory design contribution, 2026-04-26.
+- {{AVATAR_NAME}}, `memory-concept.md`, {{PROJECT_NAME}} memory design contribution, 2026-04-26.
 - `docs/05_ARCHITECTURE.md`
 - `docs/06_IMPLEMENTATION_PLAN.md`
 - `docs/11_DECISIONS.md`

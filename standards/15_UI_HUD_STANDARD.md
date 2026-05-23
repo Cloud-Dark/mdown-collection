@@ -1,14 +1,14 @@
-# CADIS UI HUD Standard
+# {{PROJECT_NAME}} UI HUD Standard
 
 ## 1. Purpose
 
-This standard defines the CADIS desktop HUD requirements. CADIS adapts the RamaClaw orbital HUD as the canonical desktop UI reference while preserving CADIS daemon ownership of protocol, state, policy, and tools.
+This standard defines the {{PROJECT_NAME}} desktop HUD requirements. {{PROJECT_NAME}} adapts the {{UI_REFERENCE}} orbital HUD as the canonical desktop UI reference while preserving {{PROJECT_NAME}} daemon ownership of protocol, state, policy, and tools.
 
 The target is product and interaction parity, not source-code parity.
 
 ## 2. Architecture
 
-The HUD is a client of `cadisd`.
+The HUD is a client of `{{PROJECT_SLUG}}d`.
 
 Rules:
 
@@ -34,16 +34,16 @@ The main HUD shell must include:
 - unified config dialog
 - agent rename dialog
 
-Component names should follow CADIS naming:
+Component names should follow {{PROJECT_NAME}} naming:
 
 ```text
-CadisWindowChrome
-CadisStatusBar
-CadisOrbitalHud
-CadisApprovalStack
-CadisChatPanel
-CadisConfigDialog
-CadisAgentRenameDialog
+{{PROJECT_NAME}}WindowChrome
+{{PROJECT_NAME}}StatusBar
+{{PROJECT_NAME}}OrbitalHud
+{{PROJECT_NAME}}ApprovalStack
+{{PROJECT_NAME}}ChatPanel
+{{PROJECT_NAME}}ConfigDialog
+{{PROJECT_NAME}}AgentRenameDialog
 ```
 
 ## 4. Window Requirements
@@ -72,7 +72,7 @@ The orbital HUD must use a 16:9 logical layout based on 1920x1080.
 
 Required elements:
 
-- central CADIS orb
+- central {{PROJECT_NAME}} orb
 - two faint orbital rings
 - dashed spokes from orb to agents
 - 12 non-overlapping perimeter slots
@@ -93,34 +93,34 @@ working
 waiting
 ```
 
-## 5.1 Wulan Avatar Engine
+## 5.1 {{AVATAR_NAME}} Avatar Engine
 
-The default center avatar remains the CADIS orb. Wulan is an optional avatar
-style and must follow `docs/26_WULAN_AVATAR_ENGINE.md`.
+The default center avatar remains the {{PROJECT_NAME}} orb. {{AVATAR_NAME}} is an optional avatar
+style and must follow `docs/26_AVATAR_ENGINE.md`.
 
 Rules:
 
-- Wulan avatar selection must be daemon-backed through `hud.avatar_style`.
-- The current Three.js Wulan Arc implementation is a HUD prototype and migration
+- {{AVATAR_NAME}} avatar selection must be daemon-backed through `hud.avatar_style`.
+- The current Three.js {{AVATAR_NAME}} Arc implementation is a HUD prototype and migration
   reference, not the long-term native engine boundary.
-- `crates/cadis-avatar` owns the renderer-independent state engine and exposes
+- `crates/{{PROJECT_SLUG}}-avatar` owns the renderer-independent state engine and exposes
   `AvatarFrame`, `BodyGestureState`, `AvatarPrivacy`, fallback state, and
   direct-wgpu uniform contract data without depending on `wgpu` or Bevy.
 - The preferred native renderer is a focused Rust/wgpu engine. The renderer
   adapter should consume `WgpuAvatarUniforms` and `WgpuRendererContract`
   directly once the heavy renderer dependency is introduced.
 - Bevy remains optional and deferred behind the future `bevy-renderer` feature
-  unless CADIS accepts a broader 3D scene engine.
-- Wulan must render from daemon-derived HUD state and disposable renderer state;
+  unless {{PROJECT_NAME}} accepts a broader 3D scene engine.
+- {{AVATAR_NAME}} must render from daemon-derived HUD state and disposable renderer state;
   it must not own sessions, agents, models, tools, policy, approvals, voice, or
   memory.
-- Wulan must provide scripted body gestures for idle, listening, thinking,
+- {{AVATAR_NAME}} must provide scripted body gestures for idle, listening, thinking,
   speaking, coding, approval, and error states.
 - Body gestures must carry priority metadata so safety and approval states can
   interrupt decorative animation.
 - Reduced-motion mode must disable large body gestures and preserve readable
   state with minimal color, opacity, or mouth/reticle changes.
-- Renderer failure must fall back to the CADIS orb without blocking the HUD.
+- Renderer failure must fall back to the {{PROJECT_NAME}} orb without blocking the HUD.
 
 Optional face tracking:
 
@@ -144,7 +144,7 @@ The status bar must show:
 - optional latency
 - optional system stats later
 
-Disconnected state must reference the CADIS daemon, not OpenClaw.
+Disconnected state must reference the {{PROJECT_NAME}} daemon, not {{LEGACY_UI}}.
 
 ## 7. Chat Panel
 
@@ -180,7 +180,7 @@ Button clicks must send `approval.respond`. Cards must remain visible until `app
 
 ## 9. Config Dialog
 
-CADIS must use one unified config dialog with these tabs:
+{{PROJECT_NAME}} must use one unified config dialog with these tabs:
 
 - Voice
 - Models
@@ -201,7 +201,7 @@ Rules:
 - trim whitespace
 - collapse repeated whitespace
 - cap at 32 characters
-- blank main-agent name falls back to `CADIS`
+- blank main-agent name falls back to `{{PROJECT_NAME}}`
 - blank subagent name falls back to role default
 - submit through `agent.rename`
 - persist in daemon state
@@ -237,7 +237,7 @@ Requirements:
 
 ## 13. Protocol Requirements
 
-The HUD must use CADIS protocol requests and events:
+The HUD must use {{PROJECT_NAME}} protocol requests and events:
 
 Requests:
 
@@ -304,19 +304,19 @@ Rules:
 - Do not execute `shell.run`, run tests, edit files, apply patches, or delete
   worktrees from the UI process.
 - Apply actions, when enabled, must route to approval-gated `file.patch` or a
-  future patch-apply tool owned by `cadisd`.
+  future patch-apply tool owned by `{{PROJECT_SLUG}}d`.
 - Discard or cleanup actions, when enabled, must route to a separate approved
-  cleanup flow that verifies CADIS-owned worker/worktree metadata.
+  cleanup flow that verifies {{PROJECT_NAME}}-owned worker/worktree metadata.
 
 ## 15. Open-Source Cleanup
 
 Before public release:
 
-- replace RamaClaw brand text with CADIS where used in implementation
-- replace OpenClaw wording with CADIS daemon wording
+- replace {{UI_REFERENCE}} brand text with {{PROJECT_NAME}} where used in implementation
+- replace {{LEGACY_UI}} wording with {{PROJECT_NAME}} daemon wording
 - remove private source paths from user-facing docs
 - confirm asset licensing
-- recreate icons as CADIS assets when needed
+- recreate icons as {{PROJECT_NAME}} assets when needed
 - verify no provider keys or local config values are committed
 
 ## 16. Testing Requirements
@@ -335,4 +335,4 @@ Required HUD tests:
 - screenshot parity at 1600x1000
 - screenshot parity at 1920x1080
 - minimum size check at 1200x760
-- no OpenClaw text or path remains in UI
+- no {{LEGACY_UI}} text or path remains in UI

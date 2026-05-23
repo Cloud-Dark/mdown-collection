@@ -1,12 +1,12 @@
-# CADIS Approval Policy Standard
+# {{PROJECT_NAME}} Approval Policy Standard
 
 ## 1. Purpose
 
-This standard defines the central approval and policy requirements for CADIS. Policy is a daemon-owned safety boundary. No client, adapter, UI, model provider, agent, or tool may bypass it.
+This standard defines the central approval and policy requirements for {{PROJECT_NAME}}. Policy is a daemon-owned safety boundary. No client, adapter, UI, model provider, agent, or tool may bypass it.
 
 ## 2. Core Rules
 
-- `cadisd` owns policy decisions.
+- `{{PROJECT_SLUG}}d` owns policy decisions.
 - Policy must run before risky tool execution.
 - Safe reads may be auto-allowed by default.
 - Secret access requires approval.
@@ -130,7 +130,7 @@ Approved execution target:
 
 - Approval records the user's decision; it does not let CLI, HUD, Telegram,
   voice, or any worker run a local action directly.
-- `cadisd` must revalidate approval expiry, tool contract, normalized input,
+- `{{PROJECT_SLUG}}d` must revalidate approval expiry, tool contract, normalized input,
   workspace grant, denied paths, secret-access policy, and session/worker state
   immediately before emitting `tool.started`.
 - If revalidation fails, the daemon emits `tool.failed` and does not execute.
@@ -144,7 +144,7 @@ Approved execution target:
 
 ## 8. Configuration
 
-Policy configuration belongs in `~/.cadis/config.toml`.
+Policy configuration belongs in `~/.{{PROJECT_SLUG}}/config.toml`.
 
 Configuration may define:
 
@@ -173,7 +173,7 @@ Clients must handle the case where another surface resolves the approval first.
 
 ## 10. Audit and Persistence
 
-When persistence is enabled, CADIS must persist:
+When persistence is enabled, {{PROJECT_NAME}} must persist:
 
 - approval request
 - policy decision
@@ -185,7 +185,7 @@ When persistence is enabled, CADIS must persist:
 Persisted data must be redacted. Raw provider keys, auth headers, and environment secrets must never be written to approval logs.
 
 The baseline persists one JSON approval record per approval under
-`~/.cadis/state/approvals`. Records include request metadata, risk class,
+`~/.{{PROJECT_SLUG}}/state/approvals`. Records include request metadata, risk class,
 expiration, decision, redacted reason, and resolution timestamp.
 
 Secret access is fail-closed by default. A request that targets secret-looking

@@ -2,9 +2,9 @@
 
 ## 1. Purpose
 
-This standard defines the CADIS local protocol rules for requests, responses, events, schemas, and compatibility.
+This standard defines the {{PROJECT_NAME}} local protocol rules for requests, responses, events, schemas, and compatibility.
 
-The protocol is the typed contract between clients and `cadisd`.
+The protocol is the typed contract between clients and `{{PROJECT_SLUG}}d`.
 
 ## 2. Protocol Principles
 

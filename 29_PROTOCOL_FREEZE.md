@@ -16,7 +16,7 @@ daemon replies with `ServerFrame` objects.
 
 ## ServerFrame envelope
 
-Every line sent by `cadisd` is a `ServerFrame`, tagged by `frame`:
+Every line sent by `{{PROJECT_SLUG}}d` is a `ServerFrame`, tagged by `frame`:
 
 | Frame        | Description                                      |
 |--------------|--------------------------------------------------|
@@ -25,7 +25,7 @@ Every line sent by `cadisd` is a `ServerFrame`, tagged by `frame`:
 
 ```json
 { "frame": "response", "payload": { "protocol_version": "0.2", "request_id": "…", "type": "…", "payload": {…} } }
-{ "frame": "event",    "payload": { "protocol_version": "0.2", "event_id": "…", "timestamp": "…", "source": "cadisd", "type": "…", "payload": {…} } }
+{ "frame": "event",    "payload": { "protocol_version": "0.2", "event_id": "…", "timestamp": "…", "source": "{{PROJECT_SLUG}}d", "type": "…", "payload": {…} } }
 ```
 
 ## Stable request set — `ClientRequest`
@@ -68,7 +68,7 @@ Every line sent by `cadisd` is a `ServerFrame`, tagged by `frame`:
 | `config.reload`            | ConfigReload          | Reload daemon configuration from disk                    |
 | `daemon.shutdown`          | DaemonShutdown        | Request graceful daemon shutdown                         |
 
-## Stable event set — `CadisEvent`
+## Stable event set — `{{PROJECT_NAME}}Event`
 
 | Wire type                       | Variant                  | Description                                              |
 |---------------------------------|--------------------------|----------------------------------------------------------|
@@ -141,7 +141,7 @@ release line. Specifically:
 - No variant will be removed or renamed.
 - No required payload field will be removed or change type.
 - New optional fields may be added to existing payloads.
-- New variants may be added to `ClientRequest`, `CadisEvent`, and `DaemonResponse`.
+- New variants may be added to `ClientRequest`, `{{PROJECT_NAME}}Event`, and `DaemonResponse`.
 - Clients must tolerate unknown event types and unknown fields.
 
 A breaking change to any frozen type requires a major protocol version bump.

@@ -1,6 +1,6 @@
 # Workspace Architecture
 
-Status: Baseline accepted and partially implemented. CADIS now initializes
+Status: Baseline accepted and partially implemented. {{PROJECT_NAME}} now initializes
 profile homes, creates daemon-known agent homes from templates, persists the
 workspace registry and active grants under the default profile, exposes
 `workspace list/register/grant/revoke/doctor` through the protocol and CLI, and
@@ -11,7 +11,7 @@ remain future work.
 
 ## 1. Purpose
 
-CADIS separates durable identity, runtime state, project files, and isolated
+{{PROJECT_NAME}} separates durable identity, runtime state, project files, and isolated
 coding execution. This prevents agents from drifting into the wrong directory,
 keeps secrets and sessions out of project repositories, and lets many coding
 workers operate on the same project without editing the same checkout.
@@ -20,10 +20,10 @@ The required concepts are:
 
 | Concept | Purpose | Example |
 | --- | --- | --- |
-| Profile home | One CADIS identity/environment with config, channels, agents, memory, sessions, skills, workers, logs, and artifacts | `~/.cadis/profiles/default/` |
-| Agent home | One persistent agent's persona, instructions, memory, skills, and policy | `~/.cadis/profiles/default/agents/rama/` |
+| Profile home | One {{PROJECT_NAME}} identity/environment with config, channels, agents, memory, sessions, skills, workers, logs, and artifacts | `~/.{{PROJECT_SLUG}}/profiles/default/` |
+| Agent home | One persistent agent's persona, instructions, memory, skills, and policy | `~/.{{PROJECT_SLUG}}/profiles/default/agents/{{AGENT_SLUG}}/` |
 | Project workspace | A real user project root that tools may access only after a grant | `~/Project/chatbot-ai-saas/` |
-| Worker worktree | An isolated git checkout for one coding worker/task | `~/Project/chatbot-ai-saas/.cadis/worktrees/w-auth-01/` |
+| Worker worktree | An isolated git checkout for one coding worker/task | `~/Project/chatbot-ai-saas/.{{PROJECT_SLUG}}/worktrees/w-auth-01/` |
 
 Rule: agent home is not project cwd, and profile home is not a sandbox.
 
@@ -31,16 +31,16 @@ Rule: agent home is not project cwd, and profile home is not a sandbox.
 
 The current desktop MVP implements only part of this architecture:
 
-- `CADIS_HOME` defaults to `~/.cadis`.
-- `~/.cadis/config.toml` can be loaded.
+- `{{PROJECT_NAME}}_HOME` defaults to `~/.{{PROJECT_SLUG}}`.
+- `~/.{{PROJECT_SLUG}}/config.toml` can be loaded.
 - JSONL event logs are written with redaction boundaries.
-- Store-level atomic JSON metadata helpers exist under `~/.cadis/state`.
+- Store-level atomic JSON metadata helpers exist under `~/.{{PROJECT_SLUG}}/state`.
 - Safe-read tool baselines canonicalize paths and reject outside-workspace reads.
 - Worker protocol/event types and HUD worker display concepts exist.
 
 Implemented baseline:
 
-- `~/.cadis/profiles/<profile>/` profile homes.
+- `~/.{{PROJECT_SLUG}}/profiles/<profile>/` profile homes.
 - Persistent daemon-known agent homes under each profile with `AGENT.toml`,
   persona/instruction/user/memory/tool guidance files, typed `POLICY.toml`
   metadata, `SKILL_POLICY.toml`, and agent-local memory/skill/prompt folders.
@@ -53,7 +53,7 @@ Implemented baseline:
   corrupt, and oversized agent files.
 - Worker events include planned worktree/artifact metadata.
 - Store helpers now resolve project worker worktree paths and metadata files
-  under `<project>/.cadis/worktrees/`, resolve worker artifact paths under
+  under `<project>/.{{PROJECT_SLUG}}/worktrees/`, resolve worker artifact paths under
   `profiles/<profile>/artifacts/workers/`, and let `workspace doctor` report
   stale worker worktree metadata or missing artifact roots.
 - Worker execution setup now creates a git worktree for session-bound project
@@ -62,7 +62,7 @@ Implemented baseline:
   artifacts for review. Worker completion runs a bounded daemon-owned
   validation command inside the worker worktree and records the redacted command
   report in worker artifacts.
-- `worker.cleanup` records cleanup intent for terminal CADIS-owned worker
+- `worker.cleanup` records cleanup intent for terminal {{PROJECT_NAME}}-owned worker
   worktrees without deleting files and rejects unknown, missing, or non-owned
   paths.
 
@@ -72,18 +72,18 @@ Still future:
 - Configurable worker command/test execution and durable worker runtime logs.
 - Checkpoint and rollback manager.
 - Dedicated profile and agent doctor commands.
-- Workspace-local skills and project `.cadis/` metadata enforcement.
+- Workspace-local skills and project `.{{PROJECT_SLUG}}/` metadata enforcement.
 
 ## 3. Target Home Layout
 
-Top-level CADIS home:
+Top-level {{PROJECT_NAME}} home:
 
 ```text
-~/.cadis/
+~/.{{PROJECT_SLUG}}/
 |-- config.toml                    # global non-secret defaults
-|-- profiles/                      # independent CADIS environments
+|-- profiles/                      # independent {{PROJECT_NAME}} environments
 |-- global-cache/                  # shared cache; safe to delete
-|-- plugins/                       # installed CADIS plugins/extensions
+|-- plugins/                       # installed {{PROJECT_NAME}} plugins/extensions
 |-- bin/                           # optional managed helper binaries
 |-- logs/                          # daemon-level redacted logs
 |-- run/                           # sockets, pid files, selected ports
@@ -93,7 +93,7 @@ Top-level CADIS home:
 Profile home:
 
 ```text
-~/.cadis/profiles/default/
+~/.{{PROJECT_SLUG}}/profiles/default/
 |-- profile.toml                   # profile config and feature flags
 |-- .env                           # secrets fallback; chmod 0600; never committed
 |-- secrets/                       # encrypted or OS-keyring-backed secret handles
@@ -116,7 +116,7 @@ Profile home:
 Agent home:
 
 ```text
-~/.cadis/profiles/default/agents/rama/
+~/.{{PROJECT_SLUG}}/profiles/default/agents/{{AGENT_SLUG}}/
 |-- AGENT.toml
 |-- PERSONA.md
 |-- INSTRUCTIONS.md
@@ -137,11 +137,11 @@ Agent home:
 
 ## 4. Project Metadata
 
-Project files stay in the user's project. CADIS metadata inside a project lives
-under `.cadis/` and must not contain secrets:
+Project files stay in the user's project. {{PROJECT_NAME}} metadata inside a project lives
+under `.{{PROJECT_SLUG}}/` and must not contain secrets:
 
 ```text
-<project>/.cadis/
+<project>/.{{PROJECT_SLUG}}/
 |-- workspace.toml
 |-- skills/
 |-- artifacts/
@@ -153,17 +153,17 @@ under `.cadis/` and must not contain secrets:
 worktree root, artifact root, and media root. It does not grant access by
 itself; the daemon must still resolve a workspace grant.
 
-Current baseline: `cadis-store` can load and write this project-local metadata,
+Current baseline: `{{PROJECT_SLUG}}-store` can load and write this project-local metadata,
 and `workspace doctor` reports missing files, registry ID mismatch, absolute
 project-local roots, and duplicate registered roots. Creation/initialization UX
 remains future work.
 
 ## 5. Media Assets Convention
 
-Project-scoped media assets generated or curated by CADIS should use:
+Project-scoped media assets generated or curated by {{PROJECT_NAME}} should use:
 
 ```text
-<project>/.cadis/media/
+<project>/.{{PROJECT_SLUG}}/media/
 |-- input/                         # user-provided or copied references
 |-- generated/                     # generated images, audio, video, sprites
 |-- thumbnails/
@@ -178,7 +178,7 @@ Rules:
 - Generated media manifests must record source prompt or task ID, producing
   agent/worker ID, model/provider if known, license/source notes, and target use.
 - Secrets, provider tokens, raw channel tokens, and private session transcripts
-  must never be stored in project `.cadis/media/`.
+  must never be stored in project `.{{PROJECT_SLUG}}/media/`.
 - Large binary media should be ignored by default unless the project explicitly
   opts into tracking it.
 
@@ -187,7 +187,7 @@ Rules:
 Project roots are registered in profile state, not guessed repeatedly:
 
 ```text
-~/.cadis/profiles/default/workspaces/
+~/.{{PROJECT_SLUG}}/profiles/default/workspaces/
 |-- registry.toml
 |-- aliases.toml
 `-- grants.jsonl
@@ -201,11 +201,11 @@ id = "chatbot-ai-saas"
 kind = "project"
 root = "~/Project/chatbot-ai-saas"
 vcs = "git"
-owner = "rama"
+owner = "{{AGENT_SLUG}}"
 trusted = true
-worktree_root = ".cadis/worktrees"
-artifact_root = ".cadis/artifacts"
-media_root = ".cadis/media"
+worktree_root = ".{{PROJECT_SLUG}}/worktrees"
+artifact_root = ".{{PROJECT_SLUG}}/artifacts"
+media_root = ".{{PROJECT_SLUG}}/media"
 checkpoint_policy = "enabled"
 ```
 
@@ -225,7 +225,7 @@ WorkspaceGrant {
 ```
 
 If no grant exists, the tool fails closed or requests approval. Grants are
-runtime policy records; project `.cadis/workspace.toml` is only metadata.
+runtime policy records; project `.{{PROJECT_SLUG}}/workspace.toml` is only metadata.
 
 ## 7. Denied Paths
 
@@ -239,9 +239,9 @@ Minimum denied paths:
 ~/.aws
 ~/.gnupg
 ~/.config/gcloud
-~/.cadis/profiles/*/.env
-~/.cadis/profiles/*/secrets
-~/.cadis/profiles/*/channels/*/tokens
+~/.{{PROJECT_SLUG}}/profiles/*/.env
+~/.{{PROJECT_SLUG}}/profiles/*/secrets
+~/.{{PROJECT_SLUG}}/profiles/*/channels/*/tokens
 /etc
 /dev
 /proc
@@ -266,21 +266,21 @@ final patch/PR         -> reviewed before merge
 Default worker worktree path:
 
 ```text
-<project>/.cadis/worktrees/<worker-id>/
+<project>/.{{PROJECT_SLUG}}/worktrees/<worker-id>/
 ```
 
 Worker state and artifacts live under the profile:
 
 ```text
-~/.cadis/profiles/default/workers/<worker-id>.toml
-~/.cadis/profiles/default/workers/<worker-id>.jsonl
-~/.cadis/profiles/default/artifacts/workers/<worker-id>/
+~/.{{PROJECT_SLUG}}/profiles/default/workers/<worker-id>.toml
+~/.{{PROJECT_SLUG}}/profiles/default/workers/<worker-id>.jsonl
+~/.{{PROJECT_SLUG}}/profiles/default/artifacts/workers/<worker-id>/
 ```
 
 Project-local worker worktree metadata lives beside the project worktree root:
 
 ```text
-<project>/.cadis/worktrees/
+<project>/.{{PROJECT_SLUG}}/worktrees/
 |-- <worker-id>/                  # planned/actual git worktree checkout
 `-- .metadata/
     `-- <worker-id>.toml          # worker ID, workspace ID, path, branch, base ref, state, artifact root
@@ -302,10 +302,10 @@ read-only by default.
 Target precedence, highest first:
 
 1. Agent-local: `profiles/<profile>/agents/<agent>/skills/`
-2. Workspace-local: `<project>/.cadis/skills/`
+2. Workspace-local: `<project>/.{{PROJECT_SLUG}}/skills/`
 3. Profile-local: `profiles/<profile>/skills/approved/`
-4. Managed plugins: `~/.cadis/plugins/*/skills/`
-5. Bundled CADIS skills
+4. Managed plugins: `~/.{{PROJECT_SLUG}}/plugins/*/skills/`
+5. Bundled {{PROJECT_NAME}} skills
 
 Generated skills should start as candidates and become active only after review
 or explicit policy.
@@ -317,7 +317,7 @@ The workspace architecture should be implemented in this order:
 | Phase | Outcome |
 | --- | --- |
 | W0 | Finalize terminology and protocol types |
-| W1 | CADIS home resolver and directory skeleton |
+| W1 | {{PROJECT_NAME}} home resolver and directory skeleton |
 | W2 | Profile manager baseline implemented |
 | W3 | Agent home manager/templates baseline implemented |
 | W4 | Workspace registry and grants |

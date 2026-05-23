@@ -5,14 +5,14 @@
 The desktop MVP reads user config from:
 
 ```text
-~/.cadis/config.toml
+~/.{{PROJECT_SLUG}}/config.toml
 ```
 
-`CADIS_HOME` can move that directory. CADIS creates this local state layout on
+`{{PROJECT_NAME}}_HOME` can move that directory. {{PROJECT_NAME}} creates this local state layout on
 first run:
 
 ```text
-~/.cadis/
+~/.{{PROJECT_SLUG}}/
 |-- config.toml
 |-- profiles/
 |   `-- default/
@@ -77,14 +77,14 @@ baseline for runtime recovery. The top-level `sessions/`, `workers/`, and
 `approvals/` directories are reserved compatibility directories; new JSON
 metadata belongs under `state/`.
 
-Profile-aware helpers now also initialize `~/.cadis/profiles/default/`. The
-profile tree is the CADIS-standard home for profile-local agents, memory,
+Profile-aware helpers now also initialize `~/.{{PROJECT_SLUG}}/profiles/default/`. The
+profile tree is the {{PROJECT_NAME}}-standard home for profile-local agents, memory,
 workspace registry metadata, worker records, session records, artifacts,
 checkpoints, event logs, channels, and secrets. The store crate keeps creating
 the existing top-level paths so current daemon/core/CLI code continues to work
 while profile-aware runtime pieces are added.
 
-When `cadisd` starts, daemon-known agents get non-destructive agent-home
+When `{{PROJECT_SLUG}}d` starts, daemon-known agents get non-destructive agent-home
 templates under `profiles/<profile>/agents/<agent>/`. Existing files are not
 overwritten.
 
@@ -93,22 +93,22 @@ overwritten.
 The current implementation supports these keys:
 
 ```toml
-cadis_home = "~/.cadis"
+{{PROJECT_SLUG}}_home = "~/.{{PROJECT_SLUG}}"
 log_level = "info"
 
-# Optional. If unset, CADIS uses $XDG_RUNTIME_DIR/cadis/cadisd.sock when
-# available, otherwise ~/.cadis/run/cadisd.sock.
-# socket_path = "~/.cadis/run/cadisd.sock"
+# Optional. If unset, {{PROJECT_NAME}} uses $XDG_RUNTIME_DIR/{{PROJECT_SLUG}}/{{PROJECT_SLUG}}d.sock when
+# available, otherwise ~/.{{PROJECT_SLUG}}/run/{{PROJECT_SLUG}}d.sock.
+# socket_path = "~/.{{PROJECT_SLUG}}/run/{{PROJECT_SLUG}}d.sock"
 
 [profile]
-# Default profile initialized under ~/.cadis/profiles/<profile>/.
+# Default profile initialized under ~/.{{PROJECT_SLUG}}/profiles/<profile>/.
 default_profile = "default"
 
 [model]
 # auto tries Ollama first and falls back to the local credential-free provider.
 # Supported values: "auto", "codex-cli", "openai", "ollama", "echo".
 # Per-agent selections may use "provider/model", for example "ollama/llama3.2"
-# or "openai/gpt-5.2"; unsupported providers are rejected by cadisd.
+# or "openai/gpt-5.2"; unsupported providers are rejected by {{PROJECT_SLUG}}d.
 provider = "auto"
 ollama_model = "llama3.2"
 ollama_endpoint = "http://127.0.0.1:11434"
@@ -117,8 +117,8 @@ openai_base_url = "https://api.openai.com/v1"
 
 [hud]
 theme = "arc"
-# Supported today: "orb", "wulan_arc".
-# Future native value after renderer integration: "wulan_native".
+# Supported today: "orb", "{{AVATAR_SLUG}}_arc".
+# Future native value after renderer integration: "{{AVATAR_SLUG}}_native".
 avatar_style = "orb"
 background_opacity = 90
 always_on_top = false
@@ -127,8 +127,8 @@ always_on_top = false
 enabled = false
 # Supported visible providers: "edge", "elevenlabs", "openai", "system".
 # "stub" is reserved for deterministic tests.
-# For ElevenLabs, set CADIS_ELEVENLABS_API_KEY or
-# ~/.cadis/secrets/elevenlabs_api_key locally; never commit provider secrets.
+# For ElevenLabs, set {{PROJECT_NAME}}_ELEVENLABS_API_KEY or
+# ~/.{{PROJECT_SLUG}}/secrets/elevenlabs_api_key locally; never commit provider secrets.
 provider = "edge"
 voice_id = "id-ID-GadisNeural"
 stt_language = "auto"
@@ -155,9 +155,9 @@ worker_delegation_enabled = true
 default_worker_role = "Worker"
 ```
 
-An example file is available at `config/cadis.example.toml`.
+An example file is available at `config/{{PROJECT_SLUG}}.example.toml`.
 
-Voice preferences are interpreted by `cadisd`. The speech policy respects
+Voice preferences are interpreted by `{{PROJECT_SLUG}}d`. The speech policy respects
 `enabled`, `auto_speak`, and `max_spoken_chars` before dispatching text to a
 provider. The daemon blocks code, diffs, terminal logs, and long raw tool or
 test output from speech. HUD/Tauri remains the local microphone and playback
@@ -165,11 +165,11 @@ bridge where platform APIs require it.
 
 ## 3. Profile Home Layout
 
-The store crate provides `CadisHome` and `ProfileHome` helpers for daemon-first
+The store crate provides `{{PROJECT_NAME}}Home` and `ProfileHome` helpers for daemon-first
 profile state:
 
 ```text
-~/.cadis/profiles/<profile>/
+~/.{{PROJECT_SLUG}}/profiles/<profile>/
 |-- profile.toml
 |-- .gitignore
 |-- agents/
@@ -208,7 +208,7 @@ The store crate provides an `AgentHome` helper. The daemon initializes homes for
 agents it knows about:
 
 ```text
-~/.cadis/profiles/<profile>/agents/<agent>/
+~/.{{PROJECT_SLUG}}/profiles/<profile>/agents/<agent>/
 |-- AGENT.toml
 |-- PERSONA.md
 |-- INSTRUCTIONS.md
@@ -232,12 +232,12 @@ agents it knows about:
 ```toml
 [agent]
 id = "main"
-display_name = "CADIS"
+display_name = "{{PROJECT_NAME}}"
 role = "Orchestrator"
 model = "auto"
 specialist_id = "orchestrator"
 specialist_label = "Orchestrator"
-persona = "Coordinate the CADIS agent cluster, track agent work, route tasks, and summarize cross-agent progress."
+persona = "Coordinate the {{PROJECT_NAME}} agent cluster, track agent work, route tasks, and summarize cross-agent progress."
 
 [files]
 persona = "PERSONA.md"
@@ -285,7 +285,7 @@ missing, invalid TOML, and oversized agent files. Dedicated `profile doctor` and
 Worker output artifacts are profile-scoped, not project-scoped:
 
 ```text
-~/.cadis/profiles/<profile>/artifacts/workers/<worker-id>/
+~/.{{PROJECT_SLUG}}/profiles/<profile>/artifacts/workers/<worker-id>/
 |-- patch.diff
 |-- test-report.json
 |-- summary.md
@@ -302,7 +302,7 @@ part of the future worker runtime.
 Profile workspace metadata lives at:
 
 ```text
-~/.cadis/profiles/<profile>/workspaces/registry.toml
+~/.{{PROJECT_SLUG}}/profiles/<profile>/workspaces/registry.toml
 ```
 
 The store crate loads and writes this TOML shape:
@@ -313,10 +313,10 @@ id = "example-project"
 kind = "project"
 root = "~/Project/example-project"
 vcs = "git"
-owner = "rama"
+owner = "{{AGENT_SLUG}}"
 trusted = true
-worktree_root = ".cadis/worktrees"
-artifact_root = ".cadis/artifacts"
+worktree_root = ".{{PROJECT_SLUG}}/worktrees"
+artifact_root = ".{{PROJECT_SLUG}}/artifacts"
 checkpoint_policy = "enabled"
 
 [[workspace.alias]]
@@ -335,7 +335,7 @@ record; revocation rewrites the active grant set so stale grants do not revive
 after daemon restart:
 
 ```text
-~/.cadis/profiles/<profile>/workspaces/grants.jsonl
+~/.{{PROJECT_SLUG}}/profiles/<profile>/workspaces/grants.jsonl
 ```
 
 Each grant records `grant_id`, `profile_id`, optional `agent_id`,
@@ -348,13 +348,13 @@ These store helpers only persist metadata. Enforcement remains daemon/runtime
 owned: file, shell, git, and worker tools must resolve an active grant before
 using a project root.
 
-## 4.1 Project `.cadis/workspace.toml`
+## 4.1 Project `.{{PROJECT_SLUG}}/workspace.toml`
 
 Project-local metadata is optional but recommended for registered project
 workspaces:
 
 ```text
-<project>/.cadis/workspace.toml
+<project>/.{{PROJECT_SLUG}}/workspace.toml
 ```
 
 The store crate loads and writes this TOML shape:
@@ -363,9 +363,9 @@ The store crate loads and writes this TOML shape:
 workspace_id = "example-project"
 kind = "project"
 vcs = "git"
-worktree_root = ".cadis/worktrees"
-artifact_root = ".cadis/artifacts"
-media_root = ".cadis/media"
+worktree_root = ".{{PROJECT_SLUG}}/worktrees"
+artifact_root = ".{{PROJECT_SLUG}}/artifacts"
+media_root = ".{{PROJECT_SLUG}}/media"
 ```
 
 `workspace doctor` reads this file when present. It warns when the file is
@@ -378,7 +378,7 @@ The file is metadata only; it does not create a workspace grant.
 Worker worktree metadata is stored below the project worktree root:
 
 ```text
-<project>/.cadis/worktrees/
+<project>/.{{PROJECT_SLUG}}/worktrees/
 |-- <worker-id>/
 `-- .metadata/
     `-- <worker-id>.toml
@@ -392,14 +392,14 @@ do not run `git worktree` commands.
 
 ## 5. Native Avatar Config Contract
 
-`crates/cadis-avatar` defines the Rust config contract for the future native
-Wulan renderer. These keys are documented now for privacy review and are not yet
+`crates/{{PROJECT_SLUG}}-avatar` defines the Rust config contract for the future native
+{{AVATAR_NAME}} renderer. These keys are documented now for privacy review and are not yet
 read by the desktop MVP config loader:
 
 ```toml
 [avatar]
 renderer = "wgpu_native" # "headless", "wgpu_native", "bevy_scene"
-renderer_fallback = "orb" # "orb", "static_wulan_texture"
+renderer_fallback = "orb" # "orb", "static_{{AVATAR_SLUG}}_texture"
 reduced_motion = false
 max_delta_ms = 250
 
@@ -424,7 +424,7 @@ Rules:
 - The current `wgpu-renderer` crate feature is a native adapter spike that builds
   render plans from `AvatarFrame`; the desktop MVP config loader does not yet
   instantiate a GPU surface from these keys.
-- Native Wulan renderer failure falls back to the CADIS orb by default and must
+- Native {{AVATAR_NAME}} renderer failure falls back to the {{PROJECT_NAME}} orb by default and must
   not block HUD launch.
 - Enabling face tracking requires explicit permission, a visible camera-active
   indicator, and a one-click disable action.
@@ -450,7 +450,7 @@ later runtime track.
 `[orchestrator]` configures daemon-owned message routing behavior. This is not a
 HUD setting.
 
-- `worker_delegation_enabled`: enables explicit `/worker`, `/spawn`, `/route`, and `/delegate` message actions handled by `cadisd`.
+- `worker_delegation_enabled`: enables explicit `/worker`, `/spawn`, `/route`, and `/delegate` message actions handled by `{{PROJECT_SLUG}}d`.
 - `default_worker_role`: role used by `/worker <task>` when no `Role: task` prefix is supplied.
 
 Direct `@agent` mention targeting remains enabled independently of this flag.
@@ -462,15 +462,15 @@ total-agent limits.
 - `auto`: tries Ollama at `ollama_endpoint`, then falls back to the local echo provider.
 - `codex-cli`: delegates to the installed official Codex CLI with `codex exec`.
   Authenticate the CLI separately with `codex login` for ChatGPT Plus/Pro access.
-  CADIS does not read, copy, or persist `~/.codex/auth.json`.
+  {{PROJECT_NAME}} does not read, copy, or persist `~/.codex/auth.json`.
 - `openai`: sends chat requests to the OpenAI Chat Completions API. It requires
-  `CADIS_OPENAI_API_KEY` or `OPENAI_API_KEY` in the daemon environment. OpenAI
+  `{{PROJECT_NAME}}_OPENAI_API_KEY` or `OPENAI_API_KEY` in the daemon environment. OpenAI
   responses stream through server-sent events when the provider supports them.
 - `ollama`: requires a running Ollama server and returns an error event if unavailable.
   Ollama responses stream through native `/api/generate` NDJSON chunks.
 - `echo`: uses the credential-free local fallback.
 
-Per-agent model selections set through `agent.model.set` are routed by `cadisd`
+Per-agent model selections set through `agent.model.set` are routed by `{{PROJECT_SLUG}}d`
 when they include a supported provider prefix:
 
 ```text
@@ -478,7 +478,7 @@ auto/llama3.2
 ollama/llama3.2
 openai/gpt-5.2
 codex-cli/gpt-5.4
-echo/cadis-local-fallback
+echo/{{PROJECT_SLUG}}-local-fallback
 ```
 
 Plain provider names such as `echo` or `ollama` select that provider with the
@@ -487,12 +487,12 @@ that model where the provider supports model overrides. Message events include
 the effective provider and model used for the response.
 
 Per-agent specialist selections set through `agent.specialist.set` are stored by
-`cadisd` and included in future daemon-built prompts for that agent. The HUD
+`{{PROJECT_SLUG}}d` and included in future daemon-built prompts for that agent. The HUD
 offers curated specialist choices such as Engineering, Research, Marketing,
 Product, Design, Data, Automation, Security, Operations, Finance, Writing, and
 Humanizer, plus a Custom persona. The daemon also applies a built-in Humanizer
 skill before model responses so normal chat stays natural, concise, and in the
-user's language. The main CADIS prompt includes a compact runtime summary of
+user's language. The main {{PROJECT_NAME}} prompt includes a compact runtime summary of
 known agents, recent agent sessions, and workers so orchestration can account
 for what the rest of the cluster is doing.
 
@@ -503,7 +503,7 @@ entries such as `echo` or fallback-capable `auto` behavior so clients can
 distinguish a real provider from the local fallback. `openai` is reported as
 `ready` only when an OpenAI API key is present in the daemon environment.
 Providers that need a daemon, login, API key, or local service are otherwise
-reported as `requires_configuration` until CADIS has active provider probing.
+reported as `requires_configuration` until {{PROJECT_NAME}} has active provider probing.
 Ollama and OpenAI entries advertise the `streaming` capability; Codex CLI
 stream events currently follow the shared callback contract but are limited by
 the official CLI process output granularity.
@@ -518,41 +518,41 @@ codes include `model_auth_missing`, `model_auth_failed`,
 Messages are redacted for client display and must not include provider keys.
 
 The OpenAI API key is not a config key. Do not put API keys, bearer tokens, or
-auth headers in `~/.cadis/config.toml`, examples, or logs.
+auth headers in `~/.{{PROJECT_SLUG}}/config.toml`, examples, or logs.
 
 ## 9. Environment Variables
 
 ```text
-CADIS_HOME
-CADIS_LOG_LEVEL
-CADIS_MODEL_PROVIDER
-CADIS_SOCKET
-CADIS_HUD_SOCKET
-VITE_CADIS_SOCKET_PATH
+{{PROJECT_NAME}}_HOME
+{{PROJECT_NAME}}_LOG_LEVEL
+{{PROJECT_NAME}}_MODEL_PROVIDER
+{{PROJECT_NAME}}_SOCKET
+{{PROJECT_NAME}}_HUD_SOCKET
+VITE_{{PROJECT_NAME}}_SOCKET_PATH
 OPENAI_API_KEY
-CADIS_OPENAI_API_KEY
+{{PROJECT_NAME}}_OPENAI_API_KEY
 CODEX_API_KEY
-CADIS_CODEX_BIN
-CADIS_CODEX_MODEL
-CADIS_CODEX_EXTRA_ARGS
-CADIS_WHISPER_CLI
+{{PROJECT_NAME}}_CODEX_BIN
+{{PROJECT_NAME}}_CODEX_MODEL
+{{PROJECT_NAME}}_CODEX_EXTRA_ARGS
+{{PROJECT_NAME}}_WHISPER_CLI
 WHISPER_CLI
-CADIS_WHISPER_MODEL
+{{PROJECT_NAME}}_WHISPER_MODEL
 WHISPER_MODEL
-CADIS_WHISPER_LANGUAGE
+{{PROJECT_NAME}}_WHISPER_LANGUAGE
 WHISPER_LANGUAGE
-CADIS_HUD_NODE
+{{PROJECT_NAME}}_HUD_NODE
 XDG_RUNTIME_DIR
 TELEGRAM_BOT_TOKEN
 ```
 
-The desktop MVP reads `CADIS_HOME`, `CADIS_LOG_LEVEL`, `CADIS_MODEL_PROVIDER`,
-`CADIS_OPENAI_API_KEY`, `OPENAI_API_KEY`, `CADIS_CODEX_BIN`,
-`CADIS_CODEX_MODEL`, and `CADIS_CODEX_EXTRA_ARGS`.
+The desktop MVP reads `{{PROJECT_NAME}}_HOME`, `{{PROJECT_NAME}}_LOG_LEVEL`, `{{PROJECT_NAME}}_MODEL_PROVIDER`,
+`{{PROJECT_NAME}}_OPENAI_API_KEY`, `OPENAI_API_KEY`, `{{PROJECT_NAME}}_CODEX_BIN`,
+`{{PROJECT_NAME}}_CODEX_MODEL`, and `{{PROJECT_NAME}}_CODEX_EXTRA_ARGS`.
 
-Socket discovery uses `CADIS_HUD_SOCKET` for the Tauri HUD, `CADIS_SOCKET` as a
+Socket discovery uses `{{PROJECT_NAME}}_HUD_SOCKET` for the Tauri HUD, `{{PROJECT_NAME}}_SOCKET` as a
 shared client override, and `XDG_RUNTIME_DIR` for the default daemon socket
-under `$XDG_RUNTIME_DIR/cadis/cadisd.sock`. `VITE_CADIS_SOCKET_PATH` is a
+under `$XDG_RUNTIME_DIR/{{PROJECT_SLUG}}/{{PROJECT_SLUG}}d.sock`. `VITE_{{PROJECT_NAME}}_SOCKET_PATH` is a
 development-only renderer seed for the browser preview; daemon state remains
 authoritative.
 
@@ -561,21 +561,21 @@ Daemon-owned voice preferences read `[voice].provider`, `[voice].voice_id`,
 preflight reporting. The current green slice supports `edge`, `elevenlabs`,
 `openai`, and `system` provider labels at the protocol/config layer. HUD/Tauri
 still performs local capture and playback. `voice_id` is provider-specific:
-CADIS ships provider defaults for first-run setup, and users may replace the
+{{PROJECT_NAME}} ships provider defaults for first-run setup, and users may replace the
 value with their own Edge or ElevenLabs voice ID without changing code.
 
-HUD voice input reads `CADIS_WHISPER_CLI`, `WHISPER_CLI`,
-`CADIS_WHISPER_MODEL`, `WHISPER_MODEL`, `CADIS_WHISPER_LANGUAGE`, and
-`WHISPER_LANGUAGE`. `CADIS_HUD_NODE` can point the Tauri side at a specific
+HUD voice input reads `{{PROJECT_NAME}}_WHISPER_CLI`, `WHISPER_CLI`,
+`{{PROJECT_NAME}}_WHISPER_MODEL`, `WHISPER_MODEL`, `{{PROJECT_NAME}}_WHISPER_LANGUAGE`, and
+`WHISPER_LANGUAGE`. `{{PROJECT_NAME}}_HUD_NODE` can point the Tauri side at a specific
 Node.js binary for local voice helper execution.
 
-ElevenLabs TTS reads `CADIS_ELEVENLABS_API_KEY` first, then
-`ELEVENLABS_API_KEY`, then `~/.cadis/secrets/elevenlabs_api_key`. Optional
-overrides are `CADIS_ELEVENLABS_BASE_URL`, `CADIS_ELEVENLABS_MODEL`, and
-`CADIS_ELEVENLABS_OUTPUT_FORMAT`.
+ElevenLabs TTS reads `{{PROJECT_NAME}}_ELEVENLABS_API_KEY` first, then
+`ELEVENLABS_API_KEY`, then `~/.{{PROJECT_SLUG}}/secrets/elevenlabs_api_key`. Optional
+overrides are `{{PROJECT_NAME}}_ELEVENLABS_BASE_URL`, `{{PROJECT_NAME}}_ELEVENLABS_MODEL`, and
+`{{PROJECT_NAME}}_ELEVENLABS_OUTPUT_FORMAT`.
 
 `CODEX_API_KEY` is consumed by the official Codex CLI when that CLI is
-configured for API-key auth; CADIS does not read it directly. `TELEGRAM_BOT_TOKEN`
+configured for API-key auth; {{PROJECT_NAME}} does not read it directly. `TELEGRAM_BOT_TOKEN`
 is reserved for the planned Telegram adapter and must stay empty in examples
 until that adapter exists.
 
@@ -583,10 +583,10 @@ until that adapter exists.
 
 - Do not store raw API keys in committed files.
 - Do not commit `~/.codex/auth.json`; treat it as a password-equivalent file.
-- Prefer `~/.cadis/config.toml` for local runtime config and keep provider keys in environment variables or a future OS keychain integration.
+- Prefer `~/.{{PROJECT_SLUG}}/config.toml` for local runtime config and keep provider keys in environment variables or a future OS keychain integration.
 - Do not write resolved secrets to logs.
-- Event logs pass through CADIS redaction before JSONL persistence.
-- Workspace registry writes and grant JSONL appends also pass through CADIS
+- Event logs pass through {{PROJECT_NAME}} redaction before JSONL persistence.
+- Workspace registry writes and grant JSONL appends also pass through {{PROJECT_NAME}}
   redaction before persistence.
 - Redact values from keys containing `api_key`, `token`, `secret`, or `authorization`.
 - Do not commit `.env`, generated auth JSON, HAR traces, crash dumps, logs, local sockets, or Tauri bundle output.
@@ -596,11 +596,11 @@ until that adapter exists.
 The store crate provides atomic JSON helpers for these exact durable files:
 
 ```text
-~/.cadis/state/sessions/<session-id>.json
-~/.cadis/state/agents/<agent-id>.json
-~/.cadis/state/agent-sessions/<agent-session-id>.json
-~/.cadis/state/workers/<worker-id>.json
-~/.cadis/state/approvals/<approval-id>.json
+~/.{{PROJECT_SLUG}}/state/sessions/<session-id>.json
+~/.{{PROJECT_SLUG}}/state/agents/<agent-id>.json
+~/.{{PROJECT_SLUG}}/state/agent-sessions/<agent-session-id>.json
+~/.{{PROJECT_SLUG}}/state/workers/<worker-id>.json
+~/.{{PROJECT_SLUG}}/state/approvals/<approval-id>.json
 ```
 
 Path components are redaction-safe: only ASCII letters, digits, `-`, and `_`
@@ -610,7 +610,7 @@ are preserved, and every other character is replaced with `_`. Empty IDs become
 State writes use a private temporary file in the same directory:
 
 ```text
-~/.cadis/state/<kind>/.<safe-id>.json.tmp.<pid>.<counter>.<nanos>
+~/.{{PROJECT_SLUG}}/state/<kind>/.<safe-id>.json.tmp.<pid>.<counter>.<nanos>
 ```
 
 The store writes redacted pretty JSON, syncs the temporary file, renames it over

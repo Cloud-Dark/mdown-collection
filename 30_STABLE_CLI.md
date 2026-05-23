@@ -1,13 +1,13 @@
 # Stable CLI Reference — v1.0
 
-CLI binary: `cadis`. Communicates with the `cadisd` daemon over a Unix socket.
+CLI binary: `{{PROJECT_SLUG}}`. Communicates with the `{{PROJECT_SLUG}}d` daemon over a Unix socket.
 
 ## Global flags
 
 | Flag | Short | Description |
 |------|-------|-------------|
 | `--json` | | Print raw NDJSON server frames instead of human-readable output |
-| `--socket <PATH>` | | Override the Unix socket path to `cadisd` |
+| `--socket <PATH>` | | Override the Unix socket path to `{{PROJECT_SLUG}}d` |
 | `--help` | `-h` | Print help and exit |
 | `--version` | `-V` | Print version and exit |
 
@@ -22,8 +22,8 @@ Global flags must appear **before** the subcommand.
 Show daemon status (version, uptime, model provider, sessions, voice state).
 
 ```bash
-cadis status
-cadis --json status
+{{PROJECT_SLUG}} status
+{{PROJECT_SLUG}} --json status
 ```
 
 ### doctor — stable
@@ -31,8 +31,8 @@ cadis --json status
 Check local config, daemon connectivity, and voice subsystem health.
 
 ```bash
-cadis doctor
-cadis --json doctor
+{{PROJECT_SLUG}} doctor
+{{PROJECT_SLUG}} --json doctor
 ```
 
 ### chat — stable
@@ -40,8 +40,8 @@ cadis --json doctor
 Send a one-shot chat message to the daemon.
 
 ```bash
-cadis chat "hello world"
-cadis --json chat "summarize this project"
+{{PROJECT_SLUG}} chat "hello world"
+{{PROJECT_SLUG}} --json chat "summarize this project"
 ```
 
 **Arguments:** `<MESSAGE>` (required, may be multiple words joined by space)
@@ -51,8 +51,8 @@ cadis --json chat "summarize this project"
 List configured model providers and their readiness.
 
 ```bash
-cadis models
-cadis --json models
+{{PROJECT_SLUG}} models
+{{PROJECT_SLUG}} --json models
 ```
 
 ### agents — stable
@@ -60,8 +60,8 @@ cadis --json models
 List daemon-owned agents.
 
 ```bash
-cadis agents
-cadis --json agents
+{{PROJECT_SLUG}} agents
+{{PROJECT_SLUG}} --json agents
 ```
 
 ### approve — stable
@@ -69,7 +69,7 @@ cadis --json agents
 Approve a pending approval request.
 
 ```bash
-cadis approve <APPROVAL_ID>
+{{PROJECT_SLUG}} approve <APPROVAL_ID>
 ```
 
 **Arguments:** `<APPROVAL_ID>` (required)
@@ -79,7 +79,7 @@ cadis approve <APPROVAL_ID>
 Deny a pending approval request.
 
 ```bash
-cadis deny <APPROVAL_ID>
+{{PROJECT_SLUG}} deny <APPROVAL_ID>
 ```
 
 **Arguments:** `<APPROVAL_ID>` (required)
@@ -89,9 +89,9 @@ cadis deny <APPROVAL_ID>
 Spawn a new child or subagent.
 
 ```bash
-cadis spawn worker
-cadis spawn worker --name w1 --model gpt-4
-cadis spawn researcher --parent agent_main --name r1
+{{PROJECT_SLUG}} spawn worker
+{{PROJECT_SLUG}} spawn worker --name w1 --model gpt-4
+{{PROJECT_SLUG}} spawn researcher --parent agent_main --name r1
 ```
 
 **Arguments:** `<ROLE>` (required)
@@ -107,11 +107,11 @@ cadis spawn researcher --parent agent_main --name r1
 Subscribe to daemon runtime events (streams until interrupted).
 
 ```bash
-cadis events
-cadis events --snapshot
-cadis events --replay 50
-cadis events --since evt_abc123
-cadis events --no-snapshot
+{{PROJECT_SLUG}} events
+{{PROJECT_SLUG}} events --snapshot
+{{PROJECT_SLUG}} events --replay 50
+{{PROJECT_SLUG}} events --since evt_abc123
+{{PROJECT_SLUG}} events --no-snapshot
 ```
 
 | Flag | Description |
@@ -126,8 +126,8 @@ cadis events --no-snapshot
 Stream recent log output from a worker.
 
 ```bash
-cadis worker tail <WORKER_ID>
-cadis worker tail w1 --lines 50
+{{PROJECT_SLUG}} worker tail <WORKER_ID>
+{{PROJECT_SLUG}} worker tail w1 --lines 50
 ```
 
 **Arguments:** `<WORKER_ID>` (required)
@@ -141,8 +141,8 @@ cadis worker tail w1 --lines 50
 Retrieve the final result of a completed worker.
 
 ```bash
-cadis worker result <WORKER_ID>
-cadis --json worker result w1
+{{PROJECT_SLUG}} worker result <WORKER_ID>
+{{PROJECT_SLUG}} --json worker result w1
 ```
 
 **Arguments:** `<WORKER_ID>` (required)
@@ -152,8 +152,8 @@ cadis --json worker result w1
 List registered workspaces.
 
 ```bash
-cadis workspace list
-cadis workspace list --grants
+{{PROJECT_SLUG}} workspace list
+{{PROJECT_SLUG}} workspace list --grants
 ```
 
 | Flag | Description |
@@ -165,10 +165,10 @@ cadis workspace list --grants
 Run health checks on a workspace.
 
 ```bash
-cadis workspace doctor
-cadis workspace doctor --workspace my-project
-cadis workspace doctor --root /home/user/project
-cadis workspace doctor my-project
+{{PROJECT_SLUG}} workspace doctor
+{{PROJECT_SLUG}} workspace doctor --workspace my-project
+{{PROJECT_SLUG}} workspace doctor --root /home/user/project
+{{PROJECT_SLUG}} workspace doctor my-project
 ```
 
 | Flag | Description |
@@ -181,8 +181,8 @@ cadis workspace doctor my-project
 Show daemon-visible voice subsystem status.
 
 ```bash
-cadis voice
-cadis voice status
+{{PROJECT_SLUG}} voice
+{{PROJECT_SLUG}} voice status
 ```
 
 ### voice doctor — stable
@@ -190,8 +190,8 @@ cadis voice status
 Show voice doctor checks and local bridge preflight state.
 
 ```bash
-cadis voice doctor
-cadis --json voice doctor
+{{PROJECT_SLUG}} voice doctor
+{{PROJECT_SLUG}} --json voice doctor
 ```
 
 ### profile — stable
@@ -199,11 +199,11 @@ cadis --json voice doctor
 Manage daemon configuration profiles.
 
 ```bash
-cadis profile list
-cadis profile create <NAME>
-cadis profile export <NAME>
-cadis profile import <NAME> <FILE>
-cadis profile remove <NAME>
+{{PROJECT_SLUG}} profile list
+{{PROJECT_SLUG}} profile create <NAME>
+{{PROJECT_SLUG}} profile export <NAME>
+{{PROJECT_SLUG}} profile import <NAME> <FILE>
+{{PROJECT_SLUG}} profile remove <NAME>
 ```
 
 **Subcommands:**
@@ -227,8 +227,8 @@ These commands may change or be removed in future v1.x releases.
 Send a desktop task as a chat request, optionally scoped to a directory.
 
 ```bash
-cadis run "build all"
-cadis run --cwd /tmp build all
+{{PROJECT_SLUG}} run "build all"
+{{PROJECT_SLUG}} run --cwd /tmp build all
 ```
 
 **Arguments:** `<TASK>` (required, remaining args joined)
@@ -246,8 +246,8 @@ Not yet implemented as a CLI subcommand. Worker worktree cleanup is managed thro
 Register a new workspace with the daemon.
 
 ```bash
-cadis workspace register my-project /home/user/project
-cadis workspace register my-project /home/user/project --kind sandbox --untrusted
+{{PROJECT_SLUG}} workspace register my-project /home/user/project
+{{PROJECT_SLUG}} workspace register my-project /home/user/project --kind sandbox --untrusted
 ```
 
 **Arguments:** `<ID>` (required), `<ROOT>` (required)
@@ -259,15 +259,15 @@ cadis workspace register my-project /home/user/project --kind sandbox --untruste
 | `--vcs <VCS>` | VCS type (default: git) |
 | `--no-vcs` | Mark workspace as having no VCS |
 | `--trusted` / `--untrusted` | Trust level (default: trusted) |
-| `--worktree-root <PATH>` | Worktree root (default: `.cadis/worktrees`) |
-| `--artifact-root <PATH>` | Artifact root (default: `.cadis/artifacts`) |
+| `--worktree-root <PATH>` | Worktree root (default: `.{{PROJECT_SLUG}}/worktrees`) |
+| `--artifact-root <PATH>` | Artifact root (default: `.{{PROJECT_SLUG}}/artifacts`) |
 
 ### workspace grant — experimental
 
 Grant workspace access to an agent.
 
 ```bash
-cadis workspace grant my-project --access read,write --agent agent_w1
+{{PROJECT_SLUG}} workspace grant my-project --access read,write --agent agent_w1
 ```
 
 **Arguments:** `<WORKSPACE_ID>` (required)
@@ -283,9 +283,9 @@ cadis workspace grant my-project --access read,write --agent agent_w1
 Revoke a workspace grant.
 
 ```bash
-cadis workspace revoke --grant grant_abc123
-cadis workspace revoke --workspace my-project --agent agent_w1
-cadis workspace revoke my-project
+{{PROJECT_SLUG}} workspace revoke --grant grant_abc123
+{{PROJECT_SLUG}} workspace revoke --workspace my-project --agent agent_w1
+{{PROJECT_SLUG}} workspace revoke my-project
 ```
 
 | Flag | Description |
@@ -302,7 +302,7 @@ These are not part of the public CLI contract.
 
 | Command | Description |
 |---------|-------------|
-| `daemon [ARGS...]` | Launch `cadisd` from sibling path or `$PATH` |
+| `daemon [ARGS...]` | Launch `{{PROJECT_SLUG}}d` from sibling path or `$PATH` |
 | `tool [OPTIONS] <NAME>` | Direct daemon tool call (internal/debug) |
 | `session subscribe <ID>` | Subscribe to a session event stream (internal/debug) |
 
@@ -315,7 +315,7 @@ These are not part of the public CLI contract.
 | `0` | Success |
 | `1` | General error (connection failure, invalid input, daemon rejection) |
 
-All errors print a message to stderr in the format: `cadis: <message>`.
+All errors print a message to stderr in the format: `{{PROJECT_SLUG}}: <message>`.
 
 ---
 
@@ -335,7 +335,7 @@ When `--json` is passed, the CLI prints one NDJSON line per server frame instead
       "status": "running",
       "version": "0.9.0",
       "protocol_version": "1",
-      "cadis_home": "/home/user/.cadis",
+      "{{PROJECT_SLUG}}_home": "/home/user/.{{PROJECT_SLUG}}",
       "sessions": 1,
       "model_provider": "ollama",
       "uptime_seconds": 3600

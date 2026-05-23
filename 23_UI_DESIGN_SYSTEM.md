@@ -2,7 +2,7 @@
 
 ## 1. Direction
 
-CADIS desktop HUD adopts the RamaClaw orbital HUD design language:
+{{PROJECT_NAME}} desktop HUD adopts the {{UI_REFERENCE}} orbital HUD design language:
 
 - dark transparent desktop HUD
 - central animated orb
@@ -94,7 +94,7 @@ central orb: near center
 agent slots: 12 perimeter slots
 ```
 
-RamaClaw implementation uses 12 non-overlapping slots:
+{{UI_REFERENCE}} implementation uses 12 non-overlapping slots:
 
 ```text
 top row:      4 agents
@@ -102,11 +102,11 @@ side columns: 4 agents
 bottom row:   4 agents
 ```
 
-CADIS should keep this slot approach because it prevents overlap and keeps the central orb clear.
+{{PROJECT_NAME}} should keep this slot approach because it prevents overlap and keeps the central orb clear.
 
 ## 6. Core Components
 
-### `CadisWindowChrome`
+### `{{PROJECT_NAME}}WindowChrome`
 
 Responsibilities:
 
@@ -117,7 +117,7 @@ Responsibilities:
 - minimize
 - close
 
-### `CadisStatusBar`
+### `{{PROJECT_NAME}}StatusBar`
 
 Responsibilities:
 
@@ -127,7 +127,7 @@ Responsibilities:
 - active/waiting/idle counts
 - optional latency and telemetry
 
-### `CadisOrbitalHud`
+### `{{PROJECT_NAME}}OrbitalHud`
 
 Responsibilities:
 
@@ -138,7 +138,7 @@ Responsibilities:
 - central orb
 - meta ring
 
-### `CadisOrb`
+### `{{PROJECT_NAME}}Orb`
 
 Responsibilities:
 
@@ -160,7 +160,7 @@ working
 waiting
 ```
 
-### `CadisAgentCard`
+### `{{PROJECT_NAME}}AgentCard`
 
 Responsibilities:
 
@@ -173,7 +173,7 @@ Responsibilities:
 - worker tree
 - context action for rename
 
-### `CadisWorkerTree`
+### `{{PROJECT_NAME}}WorkerTree`
 
 Responsibilities:
 
@@ -185,7 +185,7 @@ Responsibilities:
 - show compact worker progress without expanding card height unpredictably
 - collapse/expand
 
-### `CadisChatPanel`
+### `{{PROJECT_NAME}}ChatPanel`
 
 Responsibilities:
 
@@ -197,7 +197,7 @@ Responsibilities:
 - voice status
 - auto-scroll
 
-### `CadisApprovalCard`
+### `{{PROJECT_NAME}}ApprovalCard`
 
 Responsibilities:
 
@@ -210,7 +210,7 @@ Responsibilities:
 - approve/deny
 - wait for daemon resolution
 
-### `CadisConfigDialog`
+### `{{PROJECT_NAME}}ConfigDialog`
 
 Tabs:
 
@@ -219,7 +219,7 @@ Tabs:
 - Appearance
 - Window
 
-### `CadisAgentRenameDialog`
+### `{{PROJECT_NAME}}AgentRenameDialog`
 
 Responsibilities:
 
@@ -228,7 +228,7 @@ Responsibilities:
 - submit to daemon
 - show disconnected warning if needed
 
-### `CadisFirstRunWizard`
+### `{{PROJECT_NAME}}FirstRunWizard`
 
 Steps:
 

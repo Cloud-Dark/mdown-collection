@@ -1,8 +1,8 @@
-# CADIS Agent Standard
+# {{PROJECT_NAME}} Agent Standard
 
 ## 1. Purpose
 
-This standard defines how CADIS agents are modeled, executed, observed, limited, and displayed. It aligns with the daemon-first architecture: agents are runtime entities owned by `cadisd`, not by the CLI, HUD, Telegram adapter, or any model provider.
+This standard defines how {{PROJECT_NAME}} agents are modeled, executed, observed, limited, and displayed. It aligns with the daemon-first architecture: agents are runtime entities owned by `{{PROJECT_SLUG}}d`, not by the CLI, HUD, Telegram adapter, or any model provider.
 
 ## 2. Core Model
 
@@ -72,7 +72,7 @@ Task updates must not include secrets, full logs, or long diffs. Long content be
 
 ## 6. Delegation and Limits
 
-CADIS must enforce central limits before spawning or delegating:
+{{PROJECT_NAME}} must enforce central limits before spawning or delegating:
 
 - maximum depth
 - maximum children per agent
@@ -112,7 +112,7 @@ Rules:
 
 ## 8. Tool Use
 
-Agents must call tools only through the CADIS tool runtime.
+Agents must call tools only through the {{PROJECT_NAME}} tool runtime.
 
 Rules:
 
@@ -136,7 +136,7 @@ First-response-wins approval resolution is authoritative. Agents must consume th
 
 ## 10. Persistence and Recovery
 
-CADIS must persist enough metadata to audit sessions and recover incomplete work when feasible.
+{{PROJECT_NAME}} must persist enough metadata to audit sessions and recover incomplete work when feasible.
 
 Persist:
 
@@ -174,7 +174,7 @@ Rename behavior:
 - trim whitespace
 - collapse repeated whitespace
 - cap display name at 32 characters
-- use `CADIS` for blank main-agent names
+- use `{{PROJECT_NAME}}` for blank main-agent names
 - use role defaults for blank subagent names
 - persist through daemon state
 - update UI only from `agent.renamed`

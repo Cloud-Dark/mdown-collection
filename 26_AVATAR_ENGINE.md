@@ -1,53 +1,53 @@
-# Wulan Avatar Engine
+# {{AVATAR_NAME}} Avatar Engine
 
 ## 1. Purpose
 
-This document defines the CADIS-native Wulan avatar engine direction. The
-current Wulan Arc avatar is a useful Tauri/React/Three.js prototype, but the
+This document defines the {{PROJECT_NAME}}-native {{AVATAR_NAME}} avatar engine direction. The
+current {{AVATAR_NAME}} Arc avatar is a useful Tauri/React/Three.js prototype, but the
 long-term goal is a native, daemon-driven avatar surface that can run inside the
-CADIS HUD without making browser WebGL or JavaScript animation the permanent
+{{PROJECT_NAME}} HUD without making browser WebGL or JavaScript animation the permanent
 engine boundary.
 
 The avatar engine is a HUD rendering capability only. It must not own agent
 state, model state, policy, approvals, voice routing, tool execution, or memory.
-Those remain owned by `cadisd` and are projected to the avatar through protocol
+Those remain owned by `{{PROJECT_SLUG}}d` and are projected to the avatar through protocol
 events and daemon-owned UI preferences.
 
 ## 2. Native Engine Goal
 
-CADIS should support Wulan as an expressive center avatar with:
+{{PROJECT_NAME}} should support {{AVATAR_NAME}} as an expressive center avatar with:
 
 - local-first rendering and animation
 - daemon-derived state, not renderer-owned behavior
 - deterministic state transitions for tests and accessibility
 - optional GPU acceleration without blocking the default orb path
 - no dependency on camera, microphone, or face tracking for the default avatar
-- graceful fallback to the existing CADIS orb or static Wulan texture
+- graceful fallback to the existing {{PROJECT_NAME}} orb or static {{AVATAR_NAME}} texture
 
-The native engine should eventually replace the Three.js Wulan Arc implementation
+The native engine should eventually replace the Three.js {{AVATAR_NAME}} Arc implementation
 for production builds, while keeping the prototype available as a migration
 reference until parity is proven.
 
 ## 3. Current Prototype
 
-The current implementation lives under `apps/cadis-hud`:
+The current implementation lives under `apps/{{PROJECT_SLUG}}-hud`:
 
 - Tauri + React hosts the production-oriented HUD shell.
 - `@react-three/fiber`, `@react-three/drei`, and `three` render the optional
-  Wulan Arc WebGL scene.
+  {{AVATAR_NAME}} Arc WebGL scene.
 - `arc-avatar-transparent.png` provides the portrait texture.
 - The scene adds particles, reticles, shader glow, blink/gaze, and mouth pulse.
-- `hud.avatar_style = "wulan_arc"` is persisted through daemon-owned UI
+- `hud.avatar_style = "{{AVATAR_SLUG}}_arc"` is persisted through daemon-owned UI
   preferences.
 
 This prototype is acceptable for exploration because it is isolated to the HUD,
-lazy-loaded, and does not move WebGL dependencies into `cadisd`. It is not the
+lazy-loaded, and does not move WebGL dependencies into `{{PROJECT_SLUG}}d`. It is not the
 native engine target because the animation loop, shader code, and scene graph
-live in the web renderer rather than in a CADIS-owned Rust rendering layer.
+live in the web renderer rather than in a {{PROJECT_NAME}}-owned Rust rendering layer.
 
 ## 4. Renderer Direction
 
-The Rust foundation lives in `crates/cadis-avatar`. That crate owns the
+The Rust foundation lives in `crates/{{PROJECT_SLUG}}-avatar`. That crate owns the
 renderer-independent state machine and exposes serializable frame data, gesture
 state, privacy config, and a dependency-free direct-wgpu contract. It must stay
 free of `wgpu`, Bevy, Tauri, camera, microphone, and model-provider
@@ -70,14 +70,14 @@ Strengths:
 
 Costs:
 
-- CADIS must implement its own small scene model, asset loader, animation graph,
+- {{PROJECT_NAME}} must implement its own small scene model, asset loader, animation graph,
   and hit/gesture mapping.
 - More renderer plumbing is needed than the current Three.js prototype.
 - HUD integration differs between Tauri WebView and Rust-native windows.
 
 Recommended use:
 
-- Production native Wulan avatar engine.
+- Production native {{AVATAR_NAME}} avatar engine.
 - Shader and animation parity with the Three.js prototype.
 - Future Rust HUD or native surface embedded beside the Tauri shell.
 
@@ -88,7 +88,7 @@ Contract:
 - `WgpuRendererContract` declares target, texture format, alpha mode, uniform
   version, and first primitive families: portrait plane, hologram material,
   reticle rings, particles, face overlay, and body gesture rig.
-- With the `wgpu-renderer` feature, `crates/cadis-avatar` also exposes an
+- With the `wgpu-renderer` feature, `crates/{{PROJECT_SLUG}}-avatar` also exposes an
   adapter-ready `wgpu_renderer` spike. It turns `AvatarFrame` data into a
   deterministic `WgpuAvatarRenderPlan` for portrait, reticle, particle, face,
   and body-rig primitives without linking the `wgpu` crate. A concrete GPU
@@ -99,21 +99,21 @@ Contract:
 
 ### Bevy Renderer
 
-Do not make Bevy the first Wulan engine unless CADIS decides to build a broader
+Do not make Bevy the first {{AVATAR_NAME}} engine unless {{PROJECT_NAME}} decides to build a broader
 interactive 3D scene system.
 
 Strengths:
 
 - Mature ECS, asset pipeline, animation primitives, input handling, and `wgpu`
   backend.
-- Faster path if CADIS later needs full-body 3D rigs, skeletal animation,
+- Faster path if {{PROJECT_NAME}} later needs full-body 3D rigs, skeletal animation,
   physics-like interaction, or complex camera scenes.
 - Good development ergonomics for scene iteration.
 
 Costs:
 
 - Adds a large engine dependency for a narrow HUD avatar feature.
-- ECS ownership can blur the CADIS rule that daemon protocol is the authority
+- ECS ownership can blur the {{PROJECT_NAME}} rule that daemon protocol is the authority
   and HUD render state is disposable.
 - More startup, binary size, and dependency-audit surface than a focused
   renderer.
@@ -122,7 +122,7 @@ Costs:
 
 Recommended use:
 
-- Re-evaluate only after `wgpu` parity work proves insufficient or CADIS accepts
+- Re-evaluate only after `wgpu` parity work proves insufficient or {{PROJECT_NAME}} accepts
   a broader native 3D UI decision record.
 - Keep the `bevy-renderer` feature dependency-free until that decision exists.
 
@@ -153,7 +153,7 @@ The Rust state engine currently exposes:
 - `BodyPose`, `FacePose`, and `AvatarMaterial` as renderer-neutral pose and
   shader hints.
 - `AvatarFallbackContract` and `AvatarFallbackState` so renderer failures can
-  degrade to the CADIS orb or a static Wulan texture without blocking HUD
+  degrade to the {{PROJECT_NAME}} orb or a static {{AVATAR_NAME}} texture without blocking HUD
   launch.
 - `HeadlessAvatarRenderer` for tests and non-graphical planning.
 - Feature-gated `wgpu_renderer::WgpuAvatarSpikeRenderer` and
@@ -161,7 +161,7 @@ The Rust state engine currently exposes:
 
 ## 6. Body Gesture Set
 
-The first native Wulan engine should support a small gesture vocabulary before
+The first native {{AVATAR_NAME}} engine should support a small gesture vocabulary before
 adding full skeletal complexity:
 
 - idle breath and posture sway
@@ -190,7 +190,7 @@ Gesture priorities:
 
 ## 7. Optional Face Tracking
 
-Face tracking is optional future work, not a requirement for Wulan.
+Face tracking is optional future work, not a requirement for {{AVATAR_NAME}}.
 
 Privacy and permission rules:
 
@@ -221,13 +221,13 @@ The state crate encodes this as `FaceTrackingConfig`, `AvatarPrivacy`, and
 enabled, config must require explicit permission, a camera-active indicator, a
 one-click disable action, local-only processing, and non-persistence.
 
-## 8. Migration From Three.js Wulan Arc
+## 8. Migration From Three.js {{AVATAR_NAME}} Arc
 
 Migration should be incremental:
 
-1. Keep `Wulan Arc` as the optional Three.js prototype and default `CADIS Orb` as
+1. Keep `{{AVATAR_NAME}} Arc` as the optional Three.js prototype and default `{{PROJECT_NAME}} Orb` as
    the stable fallback.
-2. Use `crates/cadis-avatar` as the renderer-neutral state engine before adding
+2. Use `crates/{{PROJECT_SLUG}}-avatar` as the renderer-neutral state engine before adding
    a renderer crate.
 3. Port the visual primitives to Rust/wgpu: portrait plane, alpha cutoff,
    hologram shader, particles, reticle rings, eye overlay, and mouth overlay.
@@ -235,12 +235,12 @@ Migration should be incremental:
    approval, and error.
 5. Add deterministic visual fixtures for state transitions and reduced-motion
    mode.
-6. Gate native Wulan behind the existing `hud.avatar_style` preference or a new
-   compatible value such as `wulan_native` after protocol/config review.
+6. Gate native {{AVATAR_NAME}} behind the existing `hud.avatar_style` preference or a new
+   compatible value such as `{{AVATAR_SLUG}}_native` after protocol/config review.
 7. Remove the Three.js dependency path only after native parity, screenshot
    coverage, license review, and packaging checks pass.
 
-No migration step may move animation authority into `cadisd`; the daemon emits
+No migration step may move animation authority into `{{PROJECT_SLUG}}d`; the daemon emits
 events and preferences, while the HUD renderer decides pixels.
 
 ## 9. Phased Implementation
@@ -248,21 +248,21 @@ events and preferences, while the HUD renderer decides pixels.
 ### Phase A - Engine Spec and Assets
 
 - Finalize render-state names, animation priorities, and reduced-motion rules.
-- Confirm Wulan texture and future rig/asset license provenance.
+- Confirm {{AVATAR_NAME}} texture and future rig/asset license provenance.
 - Define snapshot expectations for current Three.js behavior.
 
 Exit criteria:
 
-- Wulan engine spec is linked from decisions, plan, checklist, HUD standard, and
+- {{AVATAR_NAME}} engine spec is linked from decisions, plan, checklist, HUD standard, and
   HUD README.
 - Asset provenance is documented before any new asset ships.
 
 ### Phase B - Native Renderer Spike
 
-- Create a small Rust/wgpu renderer outside `cadisd`. The first feature-gated
-  spike now lives in `crates/cadis-avatar::wgpu_renderer` as an adapter-ready
+- Create a small Rust/wgpu renderer outside `{{PROJECT_SLUG}}d`. The first feature-gated
+  spike now lives in `crates/{{PROJECT_SLUG}}-avatar::wgpu_renderer` as an adapter-ready
   render-plan builder.
-- Load the Wulan portrait texture. The spike requires a
+- Load the {{AVATAR_NAME}} portrait texture. The spike requires a
   `portrait_texture_ready` readiness bit and fails into fallback state when the
   adapter reports it unavailable; real texture upload remains a HUD/native
   adapter task.
@@ -283,7 +283,7 @@ Exit criteria:
 - Embed or launch the native surface from the HUD without changing daemon
   authority.
 - Connect render state to daemon events already consumed by the HUD.
-- Add fallback to CADIS Orb when native rendering fails.
+- Add fallback to {{PROJECT_NAME}} Orb when native rendering fails.
 
 Exit criteria:
 
@@ -298,7 +298,7 @@ Exit criteria:
 
 Exit criteria:
 
-- Wulan behavior communicates listening, thinking, speaking, coding, approval,
+- {{AVATAR_NAME}} behavior communicates listening, thinking, speaking, coding, approval,
   and error without extra explanatory UI text.
 
 ### Phase E - Optional Face Tracking
@@ -314,10 +314,10 @@ Exit criteria:
 
 ## 10. Non-Goals
 
-- Do not put avatar engine logic in `cadisd`.
+- Do not put avatar engine logic in `{{PROJECT_SLUG}}d`.
 - Do not require Bevy for v0.1.
 - Do not require camera access for avatar expressiveness.
 - Do not use face recognition, identity matching, or persistent biometrics.
 - Do not block HUD launch on native avatar renderer failure.
-- Do not remove the default CADIS orb until Wulan native fallback behavior is
+- Do not remove the default {{PROJECT_NAME}} orb until {{AVATAR_NAME}} native fallback behavior is
   proven.

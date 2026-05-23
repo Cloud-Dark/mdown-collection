@@ -2,16 +2,16 @@
 
 ## 1. Purpose
 
-This document defines the daemon-backed state contract required to adapt the RamaClaw HUD into CADIS without making the UI the owner of core state.
+This document defines the daemon-backed state contract required to adapt the {{UI_REFERENCE}} HUD into {{PROJECT_NAME}} without making the UI the owner of core state.
 
 ## 2. Core Rule
 
-The HUD may cache state for rendering, but `cadisd` owns durable state and all authoritative operational state.
+The HUD may cache state for rendering, but `{{PROJECT_SLUG}}d` owns durable state and all authoritative operational state.
 
 The UI must never execute tools, approve actions locally, mutate agent runtime
 state directly, apply worker patches, delete worktrees, or treat local browser
 storage as the source of truth. The HUD and code work panel are protocol clients
-of `cadisd`, not execution surfaces.
+of `{{PROJECT_SLUG}}d`, not execution surfaces.
 
 ## 3. View Model
 
@@ -58,7 +58,7 @@ auto_speak = true
 max_spoken_chars = 800
 
 [agents.display_names]
-main = "CADIS"
+main = "{{PROJECT_NAME}}"
 coder = "Codex"
 
 [agents.models]
@@ -88,15 +88,15 @@ replay, and live events on the same connection. HUD should rebuild
 reconnect.
 
 In the Tauri HUD, the renderer remains a protocol client and does not open the
-Unix socket directly. It calls the native `cadis_events_subscribe` command with
+Unix socket directly. It calls the native `{{PROJECT_SLUG}}_events_subscribe` command with
 the same protocol request envelope. The native side keeps the socket open,
-reads newline-delimited `ServerFrame` JSON from `cadisd`, and emits each frame
-to the renderer as a `cadis-frame` Tauri event. If the socket closes
-unexpectedly, native emits `cadis-subscription-closed`; the renderer marks the
+reads newline-delimited `ServerFrame` JSON from `{{PROJECT_SLUG}}d`, and emits each frame
+to the renderer as a `{{PROJECT_SLUG}}-frame` Tauri event. If the socket closes
+unexpectedly, native emits `{{PROJECT_SLUG}}-subscription-closed`; the renderer marks the
 gateway disconnected and reconnects with bounded backoff using the last seen
 `event_id` as `since_event_id`.
 
-The HUD may still use `cadis_request` for one-shot commands such as
+The HUD may still use `{{PROJECT_SLUG}}_request` for one-shot commands such as
 `models.list`, `daemon.status`, `message.send`, and preference or approval
 requests. Authoritative state changes must arrive through daemon events before
 the UI treats them as applied.
@@ -138,7 +138,7 @@ while keeping daemon-wide `events.subscribe` as the main state feed.
 Sent when a worker tree or code work panel needs daemon-owned worker details.
 `worker.tail` replays bounded daemon log lines. `worker.result` returns compact
 terminal worker and linked AgentSession events without raw log replay.
-`worker.cleanup` records cleanup intent for a terminal CADIS-owned worker
+`worker.cleanup` records cleanup intent for a terminal {{PROJECT_NAME}}-owned worker
 worktree; it does not delete files.
 
 ```json
@@ -166,7 +166,7 @@ Sent when the user submits text in the chat panel.
 ```
 
 `target_agent_id` is optional. HUD may include it as a hint when a leading
-`@agent` mention resolves locally, but `cadisd` remains authoritative and emits
+`@agent` mention resolves locally, but `{{PROJECT_SLUG}}d` remains authoritative and emits
 `orchestrator.route` for the final route.
 
 ### `agent.rename`
@@ -177,7 +177,7 @@ Sent after the rename dialog submits.
 {
   "type": "agent.rename",
   "agent_id": "main",
-  "display_name": "CADIS"
+  "display_name": "{{PROJECT_NAME}}"
 }
 ```
 
@@ -257,7 +257,7 @@ Sent when the user changes theme, opacity, chat prefs, window prefs, or other HU
   "patch": {
     "hud": {
       "theme": "ice",
-      "avatar_style": "wulan_arc",
+      "avatar_style": "{{AVATAR_SLUG}}_arc",
       "background_opacity": 75
     }
   }
@@ -271,7 +271,7 @@ Sent when user clicks voice test.
 ```json
 {
   "type": "voice.preview",
-  "text": "Halo, saya CADIS. Audio test berhasil.",
+  "text": "Halo, saya {{PROJECT_NAME}}. Audio test berhasil.",
   "prefs": {
     "voice_id": "id-ID-GadisNeural",
     "rate": 0,
@@ -301,7 +301,7 @@ agent routing.
 ```json
 {
   "type": "voice.preflight",
-  "surface": "cadis-hud",
+  "surface": "{{PROJECT_SLUG}}-hud",
   "summary": "ready",
   "checks": [
     {
@@ -435,7 +435,7 @@ version.
 ### `agent.session.started` / `agent.session.updated` / terminal events
 
 Tracks daemon-owned per-route agent runtime state. HUD may display these as
-task details under the agent card, but it must treat `cadisd` as authoritative
+task details under the agent card, but it must treat `{{PROJECT_SLUG}}d` as authoritative
 for timeout, budget, cancellation, result, and parent-child metadata.
 
 ```json
@@ -458,7 +458,7 @@ Terminal events are `agent.session.completed`, `agent.session.failed`, and
 `agent.session.cancelled`. Status values are `started`, `running`, `completed`,
 `failed`, `cancelled`, `timed_out`, and `budget_exceeded`.
 
-When a client sends `session.cancel`, `cadisd` marks active AgentSessions as
+When a client sends `session.cancel`, `{{PROJECT_SLUG}}d` marks active AgentSessions as
 `cancelled` and active model-provider callbacks return provider-boundary
 `Cancel` at the next stream callback. HUD should keep rendering the
 `agent.session.cancelled` state and must not convert a later closed stream into
@@ -472,7 +472,7 @@ Confirms rename and updates all surfaces.
 {
   "type": "agent.renamed",
   "agent_id": "main",
-  "display_name": "CADIS"
+  "display_name": "{{PROJECT_NAME}}"
 }
 ```
 
@@ -501,7 +501,7 @@ Streams assistant text.
   "delta": "I found the failing test",
   "content_kind": "chat",
   "agent_id": "main",
-  "agent_name": "CADIS"
+  "agent_name": "{{PROJECT_NAME}}"
 }
 ```
 
@@ -516,7 +516,7 @@ Marks final assistant output.
   "content_kind": "summary",
   "content": "I found the failing test and opened the code window.",
   "agent_id": "main",
-  "agent_name": "CADIS"
+  "agent_name": "{{PROJECT_NAME}}"
 }
 ```
 
@@ -562,26 +562,26 @@ Updates worker tree and optional transient worker card.
   "agent_id": "coding_1",
   "parent_agent_id": "coder",
   "status": "running",
-  "cli": "cadis",
+  "cli": "{{PROJECT_SLUG}}",
   "cwd": "/home/user/Project/app",
   "summary": "running cargo test",
   "worktree": {
     "workspace_id": "app",
     "project_root": "/home/user/Project/app",
-    "worktree_root": "/home/user/Project/app/.cadis/worktrees",
-    "worktree_path": "/home/user/Project/app/.cadis/worktrees/worker_auth_01",
-    "branch_name": "cadis/worker_auth_01/fix-auth",
+    "worktree_root": "/home/user/Project/app/.{{PROJECT_SLUG}}/worktrees",
+    "worktree_path": "/home/user/Project/app/.{{PROJECT_SLUG}}/worktrees/worker_auth_01",
+    "branch_name": "{{PROJECT_SLUG}}/worker_auth_01/fix-auth",
     "base_ref": "HEAD",
     "state": "active",
     "cleanup_policy": "explicit"
   },
   "artifacts": {
-    "root": "/home/user/.cadis/profiles/default/artifacts/workers/worker_auth_01",
-    "patch": "/home/user/.cadis/profiles/default/artifacts/workers/worker_auth_01/patch.diff",
-    "test_report": "/home/user/.cadis/profiles/default/artifacts/workers/worker_auth_01/test-report.json",
-    "summary": "/home/user/.cadis/profiles/default/artifacts/workers/worker_auth_01/summary.md",
-    "changed_files": "/home/user/.cadis/profiles/default/artifacts/workers/worker_auth_01/changed-files.json",
-    "memory_candidates": "/home/user/.cadis/profiles/default/artifacts/workers/worker_auth_01/memory-candidates.jsonl"
+    "root": "/home/user/.{{PROJECT_SLUG}}/profiles/default/artifacts/workers/worker_auth_01",
+    "patch": "/home/user/.{{PROJECT_SLUG}}/profiles/default/artifacts/workers/worker_auth_01/patch.diff",
+    "test_report": "/home/user/.{{PROJECT_SLUG}}/profiles/default/artifacts/workers/worker_auth_01/test-report.json",
+    "summary": "/home/user/.{{PROJECT_SLUG}}/profiles/default/artifacts/workers/worker_auth_01/summary.md",
+    "changed_files": "/home/user/.{{PROJECT_SLUG}}/profiles/default/artifacts/workers/worker_auth_01/changed-files.json",
+    "memory_candidates": "/home/user/.{{PROJECT_SLUG}}/profiles/default/artifacts/workers/worker_auth_01/memory-candidates.jsonl"
   }
 }
 ```
@@ -595,7 +595,7 @@ worker; clients should apply those events through the same worker reducer used
 for live updates. `worker.result` returns compact terminal worker and linked
 AgentSession result events without replaying raw logs, so it is suitable for
 read-only code work review. `worker.cleanup` records cleanup intent for a
-terminal CADIS-owned worker worktree and emits `worker.cleanup.requested`;
+terminal {{PROJECT_NAME}}-owned worker worktree and emits `worker.cleanup.requested`;
 it does not delete files. Terminal worktree states such as `review_pending` and
 `cleanup_pending` are planning states; they do not authorize patch application
 or deletion by the UI.
@@ -690,9 +690,9 @@ Daemon-visible TTS provider IDs are `edge`, `elevenlabs`, `openai`, and
 provider-specific user configuration, so HUD state must preserve custom IDs and
 route TTS by the selected provider instead of matching one fixed voice ID.
 
-## 7. RamaClaw Topic Mapping
+## 7. {{UI_REFERENCE}} Topic Mapping
 
-| RamaClaw topic/message | CADIS request/event |
+| {{UI_REFERENCE}} topic/message | {{PROJECT_NAME}} request/event |
 | --- | --- |
 | `user.message` | `message.send` |
 | `agent.model` | `agent.model.set` |
@@ -710,7 +710,7 @@ route TTS by the selected provider instead of matching one fixed voice ID.
 
 ## 8. Connection Behavior
 
-HUD connection behavior should preserve RamaClaw's operational feel:
+HUD connection behavior should preserve {{UI_REFERENCE}}'s operational feel:
 
 - connect to local daemon only
 - perform protocol handshake
@@ -720,19 +720,19 @@ HUD connection behavior should preserve RamaClaw's operational feel:
 - keep last subscription set
 - never log tokens
 
-CADIS replacement discovery:
+{{PROJECT_NAME}} replacement discovery:
 
 ```text
-1. explicit socketPath argument passed to the Tauri cadis_request command
-2. CADIS_HUD_SOCKET
-3. CADIS_SOCKET
-4. socket_path in ~/.cadis/config.toml
-5. $XDG_RUNTIME_DIR/cadis/cadisd.sock when XDG_RUNTIME_DIR exists
-6. ~/.cadis/run/cadisd.sock
-7. Future CADIS_HUD_URL or hud-gateway.port if WebSocket mode is enabled
+1. explicit socketPath argument passed to the Tauri {{PROJECT_SLUG}}_request command
+2. {{PROJECT_NAME}}_HUD_SOCKET
+3. {{PROJECT_NAME}}_SOCKET
+4. socket_path in ~/.{{PROJECT_SLUG}}/config.toml
+5. $XDG_RUNTIME_DIR/{{PROJECT_SLUG}}/{{PROJECT_SLUG}}d.sock when XDG_RUNTIME_DIR exists
+6. ~/.{{PROJECT_SLUG}}/run/{{PROJECT_SLUG}}d.sock
+7. Future {{PROJECT_NAME}}_HUD_URL or hud-gateway.port if WebSocket mode is enabled
 ```
 
-`VITE_CADIS_SOCKET_PATH` may seed browser-preview development state, but it is
+`VITE_{{PROJECT_NAME}}_SOCKET_PATH` may seed browser-preview development state, but it is
 not an authoritative runtime configuration source.
 
 ## 9. Voice Routing Policy
@@ -750,7 +750,7 @@ The HUD must speak only speakable content:
 | terminal_log | no |
 | test_result | short summary only |
 
-`cadisd` applies this policy before provider dispatch. Auto-speak waits for the
+`{{PROJECT_SLUG}}d` applies this policy before provider dispatch. Auto-speak waits for the
 final `message.completed` event and may then emit `voice.started` and
 `voice.completed` for short speakable content. Code, diffs, terminal logs, and
 long raw tool or test output must not emit voice playback events.
@@ -759,18 +759,18 @@ long raw tool or test output must not emit voice playback events.
 
 Protocol adaptation is valid when:
 
-- HUD can render from a mock CADIS event stream.
+- HUD can render from a mock {{PROJECT_NAME}} event stream.
 - HUD shows `session.started`, `orchestrator.route`,
   `agent.status.changed`, and `message.delta` progress before
   `message.completed`.
 - HUD worker progress renders from the mock daemon worker stream fixture without
   a running agent runtime.
-- All RamaClaw UI features have CADIS request/event equivalents.
+- All {{UI_REFERENCE}} UI features have {{PROJECT_NAME}} request/event equivalents.
 - UI preferences persist through daemon config, not localStorage.
 - Approval card lifecycle is server-confirmed.
 - Code work artifact views are read-only and route apply/cleanup back through
   daemon approvals.
 - Rename and model selection survive HUD restart.
 - Disconnection and reconnect behavior are visible and tested.
-- `apps/cadis-hud` passes pnpm lint, typecheck, unit tests, frontend build, and
+- `apps/{{PROJECT_SLUG}}-hud` passes pnpm lint, typecheck, unit tests, frontend build, and
   `src-tauri` cargo check in CI.

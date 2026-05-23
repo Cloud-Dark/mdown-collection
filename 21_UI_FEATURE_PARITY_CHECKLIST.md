@@ -2,11 +2,11 @@
 
 ## 1. Goal
 
-This checklist tracks RamaClaw-to-CADIS UI parity. A checked item means the CADIS implementation preserves the user-visible behavior and maps it to CADIS daemon protocol/state.
+This checklist tracks {{UI_REFERENCE}}-to-{{PROJECT_NAME}} UI parity. A checked item means the {{PROJECT_NAME}} implementation preserves the user-visible behavior and maps it to {{PROJECT_NAME}} daemon protocol/state.
 
 ## 2. Source Audit
 
-- [x] Audit `ramaclaw-hud` app composition.
+- [x] Audit `{{UI_REFERENCE_SLUG}}-hud` app composition.
 - [x] Audit config/settings window.
 - [x] Audit agent rename flow.
 - [x] Audit voice picker and TTS/STT behavior.
@@ -15,13 +15,13 @@ This checklist tracks RamaClaw-to-CADIS UI parity. A checked item means the CADI
 - [x] Audit gateway topics and outgoing commands.
 - [x] Audit approval card behavior.
 - [x] Audit wizard and desktop window behavior.
-- [x] Audit RamaClaw design specs.
+- [x] Audit {{UI_REFERENCE}} design specs.
 
 ## 3. Architecture Decisions
 
 - [x] Decide HUD toolkit: Tauri + React for fastest parity or Dioxus for Rust-first UI.
 - [x] Record toolkit decision in `docs/11_DECISIONS.md`.
-- [x] Define `cadis-hud.v1` protocol subset or reuse CADIS protocol directly.
+- [x] Define `{{PROJECT_SLUG}}-hud.v1` protocol subset or reuse {{PROJECT_NAME}} protocol directly.
 - [x] Decide voice ownership: daemon owns status, doctor, preview protocol,
   stop protocol, and speech policy; HUD remains the local capture/playback
   bridge where desktop APIs require it.
@@ -54,7 +54,7 @@ This checklist tracks RamaClaw-to-CADIS UI parity. A checked item means the CADI
 ## 6. Orbital HUD
 
 - [x] 16:9 logical canvas.
-- [x] Central CADIS orb.
+- [x] Central {{PROJECT_NAME}} orb.
 - [x] Faint orbital rings.
 - [x] Dashed spokes.
 - [x] 12 non-overlapping agent slots.
@@ -109,7 +109,7 @@ This checklist tracks RamaClaw-to-CADIS UI parity. A checked item means the CADI
 - [x] Voice settings shortcut.
 - [x] Model settings shortcut.
 - [x] Send disabled when disconnected.
-- [x] Disconnected placeholder references CADIS daemon, not OpenClaw.
+- [x] Disconnected placeholder references {{PROJECT_NAME}} daemon, not {{LEGACY_UI}}.
 
 ## 10. Voice UI
 
@@ -193,16 +193,16 @@ This checklist tracks RamaClaw-to-CADIS UI parity. A checked item means the CADI
 - [x] Telegram fallback step.
 - [x] Approval timeout step.
 - [x] Hotkey step.
-- [x] Save to `~/.cadis/config.toml` or daemon config API.
+- [x] Save to `~/.{{PROJECT_SLUG}}/config.toml` or daemon config API.
 - [x] Skip gracefully outside desktop runtime.
 - [x] Existing config suppresses wizard.
 
 ## 16. Gateway and Protocol
 
-- [x] Replace OpenClaw discovery with CADIS daemon discovery.
-- [x] Remove `~/.openclaw` reads.
-- [x] Use `~/.cadis` config/state.
-- [x] Subscribe to CADIS event stream.
+- [x] Replace {{LEGACY_UI}} discovery with {{PROJECT_NAME}} daemon discovery.
+- [x] Remove `~/.{{LEGACY_UI_SLUG}}` reads.
+- [x] Use `~/.{{PROJECT_SLUG}}` config/state.
+- [x] Subscribe to {{PROJECT_NAME}} event stream.
 - [x] Handle daemon status.
 - [x] Handle model list response.
 - [x] Handle agent status.
@@ -220,7 +220,7 @@ This checklist tracks RamaClaw-to-CADIS UI parity. A checked item means the CADI
 
 ## 17. Prototype Validation
 
-- [x] HUD prototype can run against mock CADIS events without a full agent runtime for worker progress.
+- [x] HUD prototype can run against mock {{PROJECT_NAME}} events without a full agent runtime for worker progress.
 - [x] Prototype view model contains only ephemeral UI state plus event-derived snapshots.
 - [x] Prototype does not use localStorage, browser storage, or UI files as authoritative durable state.
 - [x] Prototype shows daemon connected, disconnected, and reconnecting states.
@@ -260,13 +260,13 @@ This checklist tracks RamaClaw-to-CADIS UI parity. A checked item means the CADI
 - [x] Code work artifact view reducer/render tests.
 - [ ] Screenshot parity: 1600x1000. <!-- Manual verification required — see scripts/screenshot-parity.sh -->
 - [ ] Screenshot parity: 1920x1080. <!-- Manual verification required — see scripts/screenshot-parity.sh -->
-- [x] No OpenClaw text/path remains in UI.
+- [x] No {{LEGACY_UI}} text/path remains in UI.
 
 ## 20. Open-Source Cleanup
 
-- [x] Replace RamaClaw brand text with CADIS.
-- [x] Replace OpenClaw wording with CADIS daemon wording.
+- [x] Replace {{UI_REFERENCE}} brand text with {{PROJECT_NAME}}.
+- [x] Replace {{LEGACY_UI}} wording with {{PROJECT_NAME}} daemon wording.
 - [x] Replace private source paths with public references or remove them.
-- [ ] Recreate icons for CADIS.
+- [ ] Recreate icons for {{PROJECT_NAME}}.
 - [x] Confirm asset licensing.
 - [x] Ensure no provider keys or local config values are committed.

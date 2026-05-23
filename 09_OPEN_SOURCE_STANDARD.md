@@ -182,7 +182,7 @@ Review should check:
 - docs impact
 - license impact
 
-Changes touching `cadis-policy`, `cadis-tools`, `cadis-store`, shell execution, or credential handling require stricter review.
+Changes touching `{{PROJECT_SLUG}}-policy`, `{{PROJECT_SLUG}}-tools`, `{{PROJECT_SLUG}}-store`, shell execution, or credential handling require stricter review.
 
 ## 11. Public Communication
 

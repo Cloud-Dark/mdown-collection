@@ -1,8 +1,8 @@
-# CADIS Voice Standard
+# {{PROJECT_NAME}} Voice Standard
 
 ## 1. Purpose
 
-This standard defines CADIS voice behavior for text-to-speech, voice preferences, previews, HUD state, and safe content routing. Voice is an optional feature and must not become a dependency for core daemon, CLI, tool, or policy operation.
+This standard defines {{PROJECT_NAME}} voice behavior for text-to-speech, voice preferences, previews, HUD state, and safe content routing. Voice is an optional feature and must not become a dependency for core daemon, CLI, tool, or policy operation.
 
 ## 2. Ownership
 
@@ -12,7 +12,7 @@ The HUD may keep ephemeral preview state, but it must use daemon requests for du
 
 ## 3. Provider Contract
 
-CADIS must define a TTS provider trait before adding production voice engines.
+{{PROJECT_NAME}} must define a TTS provider trait before adding production voice engines.
 
 Provider responsibilities:
 
@@ -40,7 +40,7 @@ credentials.
 
 ## 4. Voice Preferences
 
-Voice preferences belong in `~/.cadis/config.toml`.
+Voice preferences belong in `~/.{{PROJECT_SLUG}}/config.toml`.
 
 Required fields:
 
@@ -96,7 +96,7 @@ The catalog should remain curated and small for the HUD. Advanced provider voice
 
 ## 6. Speakable Content Policy
 
-CADIS must speak only content that is useful and safe to hear.
+{{PROJECT_NAME}} must speak only content that is useful and safe to hear.
 
 | Content Kind | Speak |
 | --- | --- |
@@ -166,7 +166,7 @@ Voice preview should use the main agent display name in the sample text.
 
 ## 10. HUD STT Capture
 
-The HUD may capture microphone audio locally for STT, but it remains a protocol client. It must not move durable voice ownership, policy, or core agent routing out of `cadisd`.
+The HUD may capture microphone audio locally for STT, but it remains a protocol client. It must not move durable voice ownership, policy, or core agent routing out of `{{PROJECT_SLUG}}d`.
 
 Tauri/WebKitGTK builds must explicitly enable WebKit media streams before handling microphone permission requests. The Linux HUD setup must call WebKit settings `enable-media-stream` for the main webview and then allow audio-only `UserMediaPermissionRequest` requests. Video capture must not be allowed by this path.
 
@@ -215,7 +215,7 @@ ui.preferences.updated
 ```
 
 Voice preview failure must be visible in the HUD and structured in logs.
-The HUD must report its local bridge doctor/preflight results to `cadisd`
+The HUD must report its local bridge doctor/preflight results to `{{PROJECT_SLUG}}d`
 through `voice.preflight`, while still keeping microphone capture, WebAudio PCM
 fallback, whisper invocation, and native playback local to the HUD/Tauri bridge.
 
