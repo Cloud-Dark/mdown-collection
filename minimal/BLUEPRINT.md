@@ -11,7 +11,7 @@ The key change is strategic: {{PROJECT_NAME}} starts as a clean Rust-first local
 - Package and command name: `{{PROJECT_SLUG}}`
 - Daemon name: `{{PROJECT_SLUG}}d`
 - Product display name: {{PROJECT_NAME}}
-- Full name: Coordinated Agentic Distributed Intelligence System
+- Full name: {{PROJECT_FULL_NAME}}
 
 ## Positioning
 

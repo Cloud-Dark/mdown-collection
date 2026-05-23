@@ -3,14 +3,14 @@
 ## Document Control
 
 - Project: {{PROJECT_NAME}}
-- Full name: Coordinated Agentic Distributed Intelligence System
+- Full name: {{PROJECT_FULL_NAME}}
 - Repository name: {{PROJECT_SLUG}}
-- Status: Planning baseline
-- Version: 0.1.0-planning
-- Date: 2026-04-26
-- Primary target: Linux desktop
-- Later targets: Windows, macOS, Android remote client. Current
-  macOS/Windows validation status is defined in `docs/28_PLATFORM_BASELINE.md`.
+- Status: {{PROJECT_STATUS}}
+- Version: {{PROJECT_VERSION}}
+- Date: {{PROJECT_DATE}}
+- Primary target: {{PRIMARY_TARGET}}
+- Later targets: {{LATER_TARGETS}}. Current
+  {{PLATFORM_VALIDATION_NOTE}}
 
 ## Executive Summary
 

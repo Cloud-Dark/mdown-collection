@@ -200,7 +200,7 @@ Users will trust and use local AI agents more if the system behaves like an oper
 
 ## 13. Dependencies
 
-- Rust stable.
+- {{PROGRAMMING_LANGUAGE}} stable.
 - Async runtime, likely Tokio.
 - Local IPC transport.
 - Model provider SDKs or direct HTTP clients.
