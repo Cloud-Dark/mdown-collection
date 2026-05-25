@@ -1,3 +1,7 @@
+# DEPRECATED
+
+move to https://github.com/ai-builders-id/mdown-collection
+
 # {{PROJECT_NAME}} Documentation Template
 
 A reusable documentation skeleton for software projects — PRD, BRD, FRD, TRD, architecture, roadmap, risk register, decision log, plus 22 engineering standards. All product-specific names have been replaced with `{{PLACEHOLDER}}` tokens so you can adopt the skeleton in any project.
